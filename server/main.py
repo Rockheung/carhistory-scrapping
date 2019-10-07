@@ -50,7 +50,7 @@ def gen_ch_url(step):
 
 def gen_car_info_query(**params):
     return {
-        "car_num": params['car_num'],
+        "car_num": params['car_num'] if 'car_num' in params else '', 
         "ins_car_name": params['car_name'],
         "ins_car_name_code": params['ins_car_name_code'],
         "ins_car_name_code_type": params['ins_car_name_code_type'],

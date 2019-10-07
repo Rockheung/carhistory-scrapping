@@ -12,8 +12,10 @@ cors = aiohttp_cors.setup(app, defaults={
             allow_headers="*",
         )
 })
+
 app.add_routes(routes)
+
 for route in list(app.router.routes()):
     cors.add(route)
 
-web.run_app(app)
+web.run_app(app,port=8088)

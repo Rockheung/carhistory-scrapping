@@ -1099,6 +1099,8 @@ function startSelfCheck(){
 				
 		    }
 		});
+	    
+	    showCarSummary("show");
 	    	
 	    
 	    
@@ -1454,11 +1456,11 @@ function startSelfCheck(){
                       	
 
                       <form method="post" name="stepForm" id="stepForm" action="step1_proc.car">
-                      <input type="hidden" name="isCarSearch" id="isCarSearch" value="">
-                      <input type="hidden" name="ins_car_name" id="ins_car_name" value="">
-                      <input type="hidden" name="ins_car_name_code" id="ins_car_name_code" value="">
-                      <input type="hidden" name="ins_car_name_code_type" id="ins_car_name_code_type" value="">
-                      <input type="hidden" name="ins_car_made_ym" id="ins_car_made_ym" value="">
+                      <input type="hidden" name="isCarSearch" id="isCarSearch" value="true">
+                      <input type="hidden" name="ins_car_name" id="ins_car_name" value="쏘나타">
+                      <input type="hidden" name="ins_car_name_code" id="ins_car_name_code" value="61Y95">
+                      <input type="hidden" name="ins_car_name_code_type" id="ins_car_name_code_type" value="1">
+                      <input type="hidden" name="ins_car_made_ym" id="ins_car_made_ym" value="2005">
                       <div id="direct_input_guide">
                       	<div class="insu_car_number">차량번호로 조회가 안되시나요?</div><a href="javascript:showDirectInputForm();" class="insu_select_btn">차량직접선택</a>
                       </div>
@@ -1507,15 +1509,15 @@ function startSelfCheck(){
                                             <tbody>
                                                  <tr>
                                                     <th>제조사</th>
-                                                    <td id="cMaker"></td>
+                                                    <td id="cMaker">현대</td>
                                                 </tr>
                                                 <tr>
                                                     <th>차종</th>
-                                                    <td id="cName"></td>
+                                                    <td id="cName">쏘나타</td>
                                                 </tr>
                                                 <tr>
                                                     <th>세부차종</th>
-                                                    <td id="cNameDtl"></td>
+                                                    <td id="cNameDtl">*******</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -1526,11 +1528,11 @@ function startSelfCheck(){
                                             <tbody>
                                                 <tr>
                                                     <th>세부옵션</th>
-                                                    <td id="cOpt"></td>
+                                                    <td id="cOpt">**********</td>
                                                 </tr>
                                                 <tr>
                                                     <th>등록년도</th>
-                                                    <td id="cProdYear"></td>
+                                                    <td id="cProdYear">**********</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -1538,7 +1540,7 @@ function startSelfCheck(){
                                 </div>
                       	  </div>
                       </div>
-                      <input type="hidden" name="__encrypted" value="zzwxp1ThurZLYpbMSgPZiD8JwyhwS+KaMtW/8YQOwp/mthy6HW0qS6AllXfxDJOv9L3sY/RbhMdRg5IbDDiI91XLnQlxjdWjwIKjxBa5LIDFfb61LmL35qc2lu8leYDaRJDTjXjgdwnUygge6kF7JKIOZTuHJwjfMJ8EOPe3pz38Y9xZIL+6t0y73je752Q6lxu/Q8/sGWttdeshT+nDtXY4jlJREAnWKBD0mlQAMVbVy8aWIkX/Pirhd9QB+vvdibT/Eei3qw4MKQ52S3+9XPF7hN+8xI5+Vc9/k1HXWBA/WahC2KMyVCkcI331TbshbFwriKrrKml+4b01Dds3iTbnSU3aLRelOHDprWiBeL1GaD75JHZs3oOMpviVLSzjKfhIx2vJ0Uqk1i1cHIYMT8H36rGlahV7zb5vrp7KTP3saGrxK2y8oGGkj8flhl8P/qtVA98eyS71E/Lz98qrISqjhgKjJfbJNH7gq4EoFG4="></form>
+                      <input type="hidden" name="__encrypted" value="zzwxp1ThurZLYpbMSgPZiJz1qE8mx929Imb5wU3w63SxmgMFX0dx/TIZhwivv4ZQfFkbMZmimM2uJH2pufp0TBOLtPHECcyaq/R1qrqgPIMwi4jXULeq5xEgIvlattN4RU62IZfUcggDfdfSZw24M8nMtrNVKlEAi1t7xOjqrX9QjSQtp+K6kBruGJJFEvgRrWwwJ/fMjDYYv1xKNofLR3qjhGErSLwwSQNfN2d5s28fPIkNhbHJi5tE8HucYEC211/iy7uX4HObi02+0Tk9rsTSy/4EE2XkAFj3EtqWV/01AtiOOQniErilCntvWQVNJtJB8IP3p/cP/cZ1K3326NoG8rilqeQyieUGsjXwVXV0PDDI/XstGrDL6g0pSKIBbXxNBk5UVV7D9Okiqf2FjOkrOOJpSkqAi9zELeHzTGy4xePVo4bc3ceqzpfSKTewSLOU1TBQK84pA+wkKZrLVWmMB5asLbprB4nPLTUg1FCmSbunZE9yCcWXUDU17vUcmec9QsBm7Kg="></form>
                   </div>
                 </div>
             <!-- 조회폼 끝 -->
@@ -1572,8 +1574,8 @@ function startSelfCheck(){
 
 					<div class="margin-top">
 						<form id="reqCBAForm" name="reqCBAForm" method="post" action="/damoa/mobile/preProc.car" onsubmit="return startSelfCheck()">
-						<input type="hidden" name="reqNum" value='201910041349061111111111' />
-						<input type="hidden" name="certDate" value="20191004134906" />
+						<input type="hidden" name="reqNum" value='201910072129083333333333' />
+						<input type="hidden" name="certDate" value="20191007212908" />
 						<input type="hidden" id="birth" name="birth" value="" />
 						<input type="hidden" id="hpno" name="hpno" value = "" />
 						<input type="hidden" id="gender" name="gender" value="" />
@@ -1768,7 +1770,7 @@ function startSelfCheck(){
 								</div>
 							</div>
 
-						<input type="hidden" name="__encrypted" value="moAnhHJheaunurYW2IcI4oMpd77tQbaZLNtA6VYIpZWGfZXU49hoFrSw4TA0EqyHVZLNvxnPkpYRK8CSyIC9XGwtqukHhnzTXchFQa6nE9lJTAfwrWNg8Oidn3KjNgvv9e6a/l7YsDPuMFpZRCDICwrdxIRsLdszl/oHLC8IdAGauTUsnLK9pICaqU1mKhcSCqSqrwrhW1/KwcTwdggb27aLCq5yDTEBX4Qs/IEAY99QoLiz6DFFDUTO6xs/LEW4oH5EDO782xEStSnz2TapF0ctprTTGRqu7sJvqhRRFxKumb56hBZkw0tRgiF/iiAaPK9B15K+I//Nx1srjug5AOfze54Jmp1wDh1HBPzRcOcWLyE/rD52TFe/Bkdtj6OorxqkHs4OBk+tuXIVCdCcOHP5AoN5od4WUJfUoszfB0QTUdxVWGBiSt6Iq/axF3sknbNzsHKyeSmauORCRFzhQJF+8zfdQv9kE5pfGg7eJdRcLI3wr1W0xhskvoaaVPnyOaTC9yyNeBHA74TeDnp7i81LaucmiBOyaQ+Yq2FRT6cvWm6Bg2HExk+pAuAUWgDJYcUFQoxH1KUIKjr8Zbzmw8dzEFNOYvzaTkw+TpvqQXwpshl0gwWV0bLAEXcEUh1DV4dLIIDTDpuPkCV7frAwb3rXoc292CcmQlccybGH8zSJt63Wr1vq8SnnYc8yln5vk7O6iO6cYjEej1VC5eeoyRut3uQypCW2X/0eNT1phQQuIHrkiHY/LvCuRbx3Bzdr91vJHx/aExsCgVAoAQDaDBSQTpJRafTu"></form>
+						<input type="hidden" name="__encrypted" value="moAnhHJheaunurYW2IcI4oMpd77tQbaZOGy9GwlTdy/xh6HAyNHeLGTSecYmxRZYlb7M+vCnJkmDXy6h2fJX/AilRyutGx+5pmy07yUvNsK3bcwlsbGuuAjy4FnRQ9z1lCMSjHhCte5kKNlhbENUNCE8sNXITSG4LrSC/1hgo2mRVAiBuQrtcLMWKrC06XLFTTxbEnZFELXLIFyLcF1N8uUBCRUUkRiUgWX466sNkbsgwfpfXCI0LESBHeTau4X/HgPNupoYMIg0VWV/hhYl/davnJgqbi3witzdec0Uz35Bu8+qBWaW48TIKnOOI8nDZKFQBOLFPzPlb3KlH7xQDCdUzLxJUzPhDvVu/pPzzGHzBdaZCqIJ8H5wa1XuJX/3rrB1xrA/wTo447uaXXWRBPOwUi1osE2kHZ32Md6G+JL5pNvEThOnAPaagtczEOZt42fs7iH3ljhMz2ZL3wKtfW2yNOYAhnwCKqFLA4zL/gY3mkLOrzSMfS3F2/Cbn5JnH3ugChk3tUx6qgWRW73A+jNVqKmqXU7cwWrUcfwhIIMxN9s799iZ6qpVAs4iuvccnSl8o2uSk4o+Mxjvb20wVtda9S3lRFy004KHjbj1c1l3OjEDQKFvZ3L92cm+teWNeThEKXY6zvXebiMoXjCxUHeZvq0fXV1WKHbh92US8QjgyclgBJ6/518LlOOILNaLtKiD+OFxyLkgZHEN4xJuVgGVPC8hgmBkdkduU/6RLkVhqFtuTHtdqy7EQPPdaOES4Y2kwIsp10SlRigaUMCfBaQvJ4g8EJ7n"></form>
 					</div>				
 				</div>
 			</div>

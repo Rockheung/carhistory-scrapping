@@ -1,0 +1,745 @@
+openapi: 3.0.1
+info:
+  title: 카히스토리 스크래핑 서버 API
+  description: |2
+    보험료 비교견적을 얻기 위한 단계는 다음과 같습니다
+    1. 세션키 획득
+    2. 대상 차량 정보를 세션에 설정
+    3. 휴대폰을 통한 인증
+    4. 보험 옵션을 설정하여 견적 요청
+    5. 보험 견적 리스트 획득
+
+    1번은 최우선적으로 이루어져야 하며, 이후 매 요청의 쿼리스트링에 포함시켜야 합니다.
+    2번과 3번의 순서는 어느 부분이 먼저여도 상관 없습니다.
+    4번의 옵션 종류는 세션키가 유효한 동안 GET /options?key=SESSION_KEY 요청을 통해 획득할 수 있습니다.
+  contact:
+    email: rockpark.bcn@gmail.com
+  version: "0.1"
+servers:
+- url: http://54.180.183.204:8080/
+tags:
+- name: session
+  description: 세션 키 발급
+- name: car
+  description: 자동차 정보를 탐색하고 세션에 설정
+- name: auth
+  description: 사용자 실명 인증
+- name: options
+  description: 보험 옵션을 설정하고 비교금액을 얻음
+paths:
+  /session:
+    get:
+      tags:
+      - session
+      summary: 새 세션을 사용하기 위한 키를 얻습니다
+      description: 카히스토리 페이지에서 얻는 세션 키를 받아옵나다. 이후 요청에 쿼리스트링으로 포함시켜야 합니다.
+      operationId: getSession
+      responses:
+        200:
+          description: 키 발급
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionKey'
+  /car:
+    get:
+      tags:
+      - car
+      summary: 차량 번호로 검색합니다
+      description: 차량 번호를 쿼리스트링에 포함시킵니다
+      operationId: searchCarByCarNum
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열을 쿼리에 포함시킵니다
+        required: true
+        schema:
+          type: string
+      - name: num
+        in: query
+        description: 조회할 차량 번호
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarInfo'
+        404:
+          description: 조회되지 않는 차량 번호
+          content: {}
+    post:
+      tags:
+      - car
+      summary: 검색한 차량의 정보를 세션에 설정
+      operationId: setCarInfo
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: GET /car 에서 획득한 자동차 정보를 그대로 제출
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarInfo'
+        required: true
+      responses:
+        201:
+          description: 설정 성공
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+  /car/maker:
+    get:
+      tags:
+      - car
+      summary: 차량 제조사 검색
+      operationId: searchCarMaker
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarMakerList'
+  /car/name:
+    get:
+      tags:
+      - car
+      summary: 차량 이름 검색
+      operationId: searchCarName
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열
+        required: true
+        schema:
+          type: string
+      - name: car_maker
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarNameList'
+  /car/year:
+    get:
+      tags:
+      - car
+      summary: 차량 제조년 검색
+      operationId: searchCarProdYear
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열
+        required: true
+        schema:
+          type: string
+      - name: car_maker
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: car_name
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarProdYearList'
+  /car/detail:
+    get:
+      tags:
+      - car
+      summary: 차량 세부사항 검색
+      operationId: searchCarDetail
+      parameters:
+      - name: key
+        in: query
+        description: 세션 인증을 위한 키 문자열
+        required: true
+        schema:
+          type: string
+      - name: car_maker
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: car_name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: prod_year
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDetailList'
+  /car/options:
+    get:
+      tags:
+      - car
+      summary: 차량 옵션 검색
+      description: 차량 번호를 쿼리스트링에 포함시킵니다
+      operationId: searchCarOptions
+      parameters:
+      - name: key
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: car_maker
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: car_name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: prod_year
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: car_name_dtl
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarOptionsList'
+  /auth:
+    put:
+      tags:
+      - auth
+      summary: 문자를 통해 획득한 인증 번호 제출
+      operationId: setAuth
+      parameters:
+      - name: key
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitSmsNum'
+        required: true
+      responses:
+        201:
+          description: 인증 성공
+          content: {}
+    post:
+      tags:
+      - auth
+      summary: 인증 문자 요청
+      operationId: getAuth
+      parameters:
+      - name: key
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitUserInfo'
+        required: true
+      responses:
+        201:
+          description: 인증 요청 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitUserInfoResult'
+  /options:
+    get:
+      tags:
+      - options
+      summary: 가능한 보험 옵션 획득
+      operationId: getInsuOptions
+      parameters:
+      - name: key
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 보험 옵션 리스트
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuOptions'
+    post:
+      tags:
+      - options
+      summary: 보험 옵션에 따른 비교견적 리스트 획득
+      parameters:
+      - name: key
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitInsuOptions'
+        required: true
+      responses:
+        200:
+          description: 보험사 비교견적 리스트
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuEstimateList'
+components:
+  schemas:
+    SessionKey:
+      type: object
+      properties:
+        key:
+          type: string
+          default: Ps8b8l2k9Q2a0IR0LuVomD0iZpqXOnYS9kxruPlXwT8KtoLQycuh3xUY1I380Udr
+    CarInfo:
+      type: object
+      properties:
+        car_maker:
+          type: string
+          default: 현대
+        car_opt:
+          type: string
+          default: N20 디럭스 고급형,오토,ABS,AIR-D,IM(가솔린)
+        prod_year:
+          type: string
+          default: "2005"
+        car_maker_year:
+          type: string
+          default: "201904"
+        ins_car_name_code_type:
+          type: string
+          default: "1"
+        prod_year_name:
+          type: string
+          default: "2005"
+        ins_car_name_code:
+          type: string
+          default: 61Y95
+        car_quota:
+          type: string
+          default: "5"
+        car_name_dtl:
+          type: string
+          default: NF쏘나타 2.0(신형)
+        car_name:
+          type: string
+          default: 쏘나타
+    CarMakerList:
+      type: array
+      items:
+        type: object
+        properties:
+          car_maker:
+            type: string
+    CarNameList:
+      type: array
+      items:
+        type: object
+        properties:
+          car_name:
+            type: string
+    CarProdYearList:
+      type: array
+      items:
+        type: object
+        properties:
+          prod_year_name:
+            type: string
+          prod_year:
+            type: string
+    CarDetailList:
+      type: array
+      items:
+        type: object
+        properties:
+          car_name_dtl:
+            type: string
+    CarOptionsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/CarInfo'
+    SubmitUserInfo:
+      type: object
+      properties:
+        birth:
+          type: string
+          default: "19901125"
+        hpno:
+          type: string
+          default: "01071349409"
+        gender:
+          type: string
+          default: M
+        name:
+          type: string
+          default: 박흥준
+        fgnGbn:
+          type: string
+          default: "1"
+        ssn1:
+          type: string
+          default: "901125"
+        ssn2:
+          type: string
+          default: "1034746"
+        hpcorp:
+          type: string
+          default: LGM
+        number:
+          type: string
+          default: "010"
+        number2:
+          type: string
+          default: "7134"
+        number3:
+          type: string
+          default: "9409"
+    SubmitUserInfoResult:
+      type: object
+      properties:
+        reqInfo:
+          type: string
+          default: A1A1FF494D4328DFCD66FF8748208FD79CFE1A8B5A4530B9DF8333F8562FF26B069F6F9DCF7F0F383E328AFEF50AA55CDEEC43D1CF7093FDBF81D468F5BD2658626D99DC148C06CB861BDB59BD3BC162DA2E50496A3CD6E6AC5B8B73ECC88116927A905AF1F0D6E389C27B0FDD4D6DA7C4D39C7ABA2BB2BEDC002F72DB75D0CBC6BD51C2AC4D4C6DB8B18A68CF93A389
+        reqNum:
+          type: string
+          default: '201910041448593333333333                '
+        confirmSeq:
+          type: string
+          default: "01"
+    SubmitSmsNum:
+      type: object
+      properties:
+        username:
+          type: string
+          default: 박흥준
+        sBirthdate:
+          type: string
+          default: "19901125"
+        sGender:
+          type: string
+          default: "1"
+        ssn1:
+          type: string
+          default: "901125"
+        ssn2:
+          type: string
+          default: "1034746"
+        reqInfo:
+          type: string
+          default: A1A1FF494D4328DFCD66FF8748208FD79CFE1A8B5A4530B9DF8333F8562FF26B069F6F9DCF7F0F383E328AFEF50AA55CDEEC43D1CF7093FDBF81D468F5BD2658626D99DC148C06CB861BDB59BD3BC162DA2E50496A3CD6E6AC5B8B73ECC88116927A905AF1F0D6E389C27B0FDD4D6DA7C4D39C7ABA2BB2BEDC002F72DB75D0CBC6BD51C2AC4D4C6DB8B18A68CF93A389
+        confirmSeq:
+          type: string
+          default: "01"
+        reqNum:
+          type: string
+          default: '201910041448593333333333                '
+        smsnum:
+          type: string
+          default: "873517"
+    InsuOptions:
+      type: object
+      properties:
+        psn2Yn:
+          type: array
+          items:
+            type: string
+        tng1Amt:
+          type: array
+          items:
+            type: string
+        driverInjGubun:
+          type: array
+          items:
+            type: string
+        driverDthAmt:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        driverInjAmt:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        noInsYn:
+          type: array
+          items:
+            type: string
+        mycarYn:
+          type: array
+          items:
+            type: string
+        emgServiceYn:
+          type: array
+          items:
+            type: string
+        tngBaseAmt:
+          type: array
+          items:
+            type: string
+        driverScope:
+          type: array
+          items:
+            type: string
+        minBrith:
+          type: string
+        minBrithY:
+          type: array
+          items:
+            type: string
+        minBrithM:
+          type: array
+          items:
+            type: string
+        minBrithD:
+          type: array
+          items:
+            type: string
+        special1Yn:
+          type: array
+          items:
+            type: string
+        special1Opt:
+          type: array
+          items:
+            type: string
+        special2Yn:
+          type: array
+          items:
+            type: string
+        special2Opt1:
+          type: string
+        special2Opt3:
+          type: string
+        special2YYYY:
+          type: array
+          items:
+            type: string
+        special2MM:
+          type: array
+          items:
+            type: string
+        special2Opt2:
+          type: string
+        special3Yn:
+          type: array
+          items:
+            type: string
+        cChildGb:
+          type: array
+          items:
+            type: string
+        special3Opt:
+          type: string
+        special3YYYY:
+          type: array
+          items:
+            type: string
+        special3MM:
+          type: array
+          items:
+            type: string
+        special3DD:
+          type: array
+          items:
+            type: string
+        special4Yn:
+          type: array
+          items:
+            type: string
+        special5Yn:
+          type: array
+          items:
+            type: string
+        special5Opt:
+          type: string
+        special5Opt3:
+          type: array
+          items:
+            type: string
+        special5Opt2:
+          type: array
+          items:
+            type: string
+        special6Yn:
+          type: array
+          items:
+            type: string
+        special6Opt:
+          type: string
+        special7Yn:
+          type: array
+          items:
+            type: string
+        limitSpecial7Opt1:
+          type: string
+        special7Opt1:
+          type: string
+        special7Opt2:
+          type: string
+        special8Yn:
+          type: array
+          items:
+            type: string
+        special9Yn:
+          type: array
+          items:
+            type: string
+    SubmitInsuOptions:
+      type: object
+      properties:
+        psn2Yn:
+          type: string
+          default: "1"
+        tng1Amt:
+          type: string
+          default: "20000"
+        driverDthAmt:
+          type: string
+          default: "3000"
+        driverInjAmt:
+          type: string
+          default: "1500"
+        driverInjGubun:
+          type: string
+          default: "1"
+        noInsYn:
+          type: string
+          default: "1"
+        mycarYn:
+          type: string
+          default: "1"
+        emgServiceYn:
+          type: string
+          default: "1"
+        tngBaseAmt:
+          type: string
+          default: "200"
+        driverScope:
+          type: string
+          default: "3"
+        minBrith:
+          type: string
+          default: "19901125"
+        special1Yn:
+          type: string
+          default: "0"
+        special1Opt:
+          type: string
+          default: "00000"
+        special2Yn:
+          type: string
+          default: "0"
+        special2Opt1:
+          type: string
+          default: "000000"
+        special2Opt3:
+          type: string
+          default: "000"
+        special3Yn:
+          type: string
+          default: "0"
+        cChildGb:
+          type: string
+          default: c
+        special3Opt:
+          type: string
+          default: "00000000"
+        special4Yn:
+          type: string
+          default: "0"
+        special5Yn:
+          type: string
+          default: "0"
+        special5Opt:
+          type: string
+          default: "000"
+        special6Yn:
+          type: string
+          default: "0"
+        special6Opt:
+          type: string
+          default: "000"
+        special7Yn:
+          type: string
+          default: "0"
+        limitSpecial7Opt1:
+          type: string
+          default: "12000"
+        special7Opt1:
+          type: string
+          default: "00000"
+        special8Yn:
+          type: string
+          default: "0"
+        special9Yn:
+          type: string
+          default: "0"
+    InsuEstimateList:
+      type: array
+      items:
+        type: object
+        properties:
+          insu_link:
+            type: string
+            default: https://www.educar.co.kr/st/ins.html
+          insu_total_cost:
+            type: string
+            default: 1,440,340
+          insu_company_name:
+            type: string
+            default: 더케이손해보험
