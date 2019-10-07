@@ -1,0 +1,274 @@
+@localhost = http://127.0.0.1:4000
+@carhistory = https://www.carhistory.or.kr
+@targetHost = {{carhistory}}
+
+### 자동차 보험료 조회 시작
+# 이떄 받아온 cookie를 토대로 서버에서 세션을 기억한다.
+
+GET {{targetHost}}/damoa/mobile/step1.car HTTP/1.1
+
+###
+
+### 세션키 저장을 위한 별것 없는 요청
+
+POST {{targetHost}}/setDevice.ajax HTTP/1.1
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Referer: https://www.carhistory.or.kr/main.car?realm=
+
+device=android
+
+
+### 차량 정보 조회
+# 페이지에서 차량 번호를 타이핑하여 검색하는 과정이다.
+
+POST {{targetHost}}/damoa/mobile/searchCarData.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/step1.car
+
+type=srchKidiCarInfo
+&car_num=49무4046
+
+
+### 받아온 값을 서버에 저장
+# 위 단계에서 조회되는 즉시 서버에 결과를 바로 전송하여 이 세션에 대한 차량의 정보를 서버에서 기억한다.
+
+POST {{targetHost}}/damoa/mobile/searchCarData.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/step1.car
+
+type=setCarInfo
+&car_num=49%EB%AC%B44046
+&ins_car_name=SM7
+&ins_car_name_code=71H03
+&ins_car_name_code_type=1
+&ins_car_made_ym=2010
+&cMaker=%EC%82%BC%EC%84%B1
+&cName=SM7
+&cNameDtl=SM7+2.3
+&cOpt=5%EC%9D%B8%EC%8A%B9+%ED%94%84%EB%A0%88%EC%8A%A4%ED%8B%B0%EC%A7%80%2C%EC%98%A4%ED%86%A0%2C%EC%97%90%EC%96%B4%EC%BB%A8%2CP%2FS%2CABS%2CAIR-D%2CIM(%EA%B0%80%EC%86%94%EB%A6%B0)
+&cProdYear=2010
+
+### 사람인증을 하는 단계이다. 이 단계에서 폰으로 인증 문자가 전송된다.
+# 다음은 step1의 문서에서 가져와야 하는 value이다. hidden으로 서버에서 날아온다.
+# form#reqCBAForm input[name="reqNum"], input[name="certDate"], input[name="__encrypted"]
+# reqNum
+# certDate
+# __encrypted=^moAnhH
+
+# hpcorp: SKT KTF LGT SKM KTM LGM
+# fgnGbn: 1: 내국인, 2: 외국인
+# gender: M F
+
+POST {{targetHost}}/damoa/mobile/preProc.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/step1.car
+
+reqNum=201909301916521111111111
+&certDate=20190930191652
+&birth=19901125
+&hpno=01071349409
+&gender=M
+&name=%EB%B0%95%ED%9D%A5%EC%A4%80
+&fgnGbn=1
+&ssn1=901125
+&ssn2=1034746
+&hpcorp=LGM
+&number=010
+&number2=7134
+&number3=9409
+
+
+### 문자가 날아오면 친절하게 수정하여 서버로 사람 인증을 하면 된다.
+# 다음은 preProc의 문서에서 가져와야 하는 value이다. hidden으로 서버에서 날아온다.
+# form[name="reqPCCResultForm"] input[name="reqInfo"], input[name="reqNum"], input[name="smsnum"], input[name="__encrypted"]
+# reqInfo
+# reqNum
+# smsnum
+# __encrypted=^HYnpJy
+
+POST {{targetHost}}/damoa/mobile/newPostProc.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/preProc.car
+
+username=%EB%B0%95%ED%9D%A5%EC%A4%80
+&sBirthdate=19901125
+&sGender=1
+&ssn1=901125
+&ssn2=1034746
+&reqInfo=A1A1FF494D4328DFCD66FF8748208FD79CFE1A8B5A4530B9DF8333F8562FF26B069F6F9DCF7F0F383E328AFEF50AA55CDEEC43D1CF7093FDBF81D468F5BD2658626D99DC148C06CB861BDB59BD3BC162DA2E50496A3CD6E6AC5B8B73ECC881164263ABF7F6E53944468C7D7F365E18027DD7A942ADDE2B2AC539FC51220C644C6EE26EAC29093049D206377E8EBD504A
+&confirmSeq=01
+&reqNum=201909301916521111111111++++++++++++++++
+&smsnum=227178
+
+
+### 인증 번호를 제출하면 다음으로 넘어간다. 웹에서는 빠르게 넘어가버린다.
+# 다음은 newPostProc의 문서에서 가져와야 하는 value이다. hidden으로 서버에서 날아온다.
+# form[name="sForm"] input[name="encIPinKey"], input[name="__encrypted"]
+# encIPinKey
+# __encrypted=^HYnpJy
+
+POST {{targetHost}}/damoa/mobile/step2.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/newPostProc.car
+
+username=%EB%B0%95%ED%9D%A5%EC%A4%80
+&sBirthdate=19901125
+&sGender=1
+&encIPinKey=AbAJPrG06FUnawSM0g/A0v4f1Chzxh5XjAjlF+WZ
+
+### 이제 EndGame, 최종단계다. 비교된 보험료 목록이 도큐먼트에 담겨져 날아온다.
+# 다음은 step2의 문서에서 가져와야 하는 value이다. hidden으로 서버에서 날아온다.
+# form[name="infoForm"] input[name="__encrypted"]
+# __encrypted=^Z8A8Cd
+
+POST {{targetHost}}/damoa/mobile/step3.car HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Referer: {{targetHost}}/damoa/mobile/step2.car
+
+ssn1=901125&ssn2=1034746&authType=5&userCi=AbAJPrG06FUnawSM0g%2FA0v4f1Chzxh5XjAjlF%2BWZ&kniaSsn=9011251M00001&carInfoSeq=0202&contInfoSeq=0002&carPlateGubun=0&carPlateAgentCode=1&carPlateNo=000000000000&orgCd=&insTypeCode=&insContNo=&ins_car_name=SM7&ins_car_name_code=71H03&ins_car_name_code_type=1&ins_car_made_ym=2010&ins_begin_date=20190930&ins_end_date=20200930&ins_car_name=SM7&car_use_type=1&psn2Yn=1&tng1Amt=20000&driverDthAmt=3000&driverInjAmt=1500&driverInjGubun=1&noInsYn=1&mycarYn=1&emgServiceYn=1&tngBaseAmt=200&driverScope=3&minBrith=19901125&minBrithY=1990&minBrithM=11&minBrithD=25&special1Yn=0&special1Opt=00000&special2Yn=0&special2Opt1=000000&special2Opt3=000&special2YYYY=&special2MM=&special2Opt2=000&special3Yn=0&cChildGb=c&special3Opt=00000000&special3YYYY=&special3MM=&special3DD=&special4Yn=0&special5Yn=0&special5Opt=000&special6Yn=0&special6Opt=000&special7Yn=0&limitSpecial7Opt1=12000&special7Opt1=00000&special7Opt2=00000&special8Yn=0&special9Yn=0
+
+###
+# hidden values
+ssn1=901125
+&ssn2=1034746
+&authType=5
+&userCi=AbAJPrG06FUnawSM0g/A0v4f1Chzxh5XjAjlF+WZ
+&kniaSsn=9011251M00001
+&carInfoSeq=0199
+&contInfoSeq=0002
+&carPlateGubun=0
+&carPlateAgentCode=1
+&carPlateNo=000000000000
+&orgCd=
+&insTypeCode=
+&insContNo=
+&ins_car_name=
+&ins_car_name_code=71H03
+&ins_car_name_code_type=1
+&ins_car_made_ym=
+&ins_begin_date=20190930
+&ins_end_date=20200930
+&car_use_type=1
+# 대인배상2
+&psn2Yn=1
+# 대물배상
+&tng1Amt=20000
+# 1: 자기신체손해, 2: 자동차상해, 3: 미가입
+&driverInjGubun=1
+# 자기신체손해
+&driverDthAmt=3000
+&driverInjAmt=1500
+# 무보험차상해
+&noInsYn=1
+# 자기차량손해
+&mycarYn=1
+# 긴급출동 서비스
+&emgServiceYn=1
+# 물적사고 할증금액
+&tngBaseAmt=200
+# 운전자 범위
+&driverScope=3
+&minBrith=19901125
+&minBrithY=1990
+&minBrithM=11
+&minBrithD=25
+# 마일리지 할인
+&special1Yn=0
+&special1Opt=00000
+# 블랙박스 할인
+&special2Yn=0
+&special2Opt1=000000
+&special2Opt3=000
+&special2YYYY=
+&special2MM=
+&special2Opt2=000
+# 자녀할인
+&special3Yn=0
+# c: 자녀, t: 태아
+&cChildGb=c
+&special3Opt=00000000
+&special3YYYY=
+&special3MM=
+&special3DD=
+# 사고통보장치 할인
+&special4Yn=0
+# 대중교통 할인: 피보험자1인(3) 또는 부부한정(2)만 가능
+&special5Yn=0
+# 피보험자1인(3): 006 012, 부부한정(2): 012 024
+&special5Opt=000
+# 안전운전습관 할인
+&special6Yn=0
+&special6Opt=000
+# 과거주행거리연동 할인
+&special7Yn=0
+&limitSpecial7Opt1=12000
+&special7Opt1=00000
+&special7Opt2=00000
+# E-MAIL 할인
+&special8Yn=0
+# 서민우대 할인
+&special9Yn=0
+
+
+###
+
+ssn1: 901125
+ssn2: 1034746
+authType: 5
+userCi: AbAJPrG06FUnawSM0g/A0v4f1Chzxh5XjAjlF+WZ
+kniaSsn: 9011251M00001
+carInfoSeq: 0202
+contInfoSeq: 0002
+carPlateGubun: 0
+carPlateAgentCode: 1
+carPlateNo: 000000000000
+orgCd: 
+insTypeCode: 
+insContNo: 
+ins_car_name: SM7
+ins_car_name_code: 71H03
+ins_car_name_code_type: 1
+ins_car_made_ym: 2010
+ins_begin_date: 20190930
+ins_end_date: 20200930
+ins_car_name: SM7
+car_use_type: 1
+psn2Yn: 1
+tng1Amt: 20000
+driverDthAmt: 3000
+driverInjAmt: 1500
+driverInjGubun: 1
+noInsYn: 1
+mycarYn: 1
+emgServiceYn: 1
+tngBaseAmt: 200
+driverScope: 3
+minBrith: 19901125
+minBrithY: 1990
+minBrithM: 11
+minBrithD: 25
+special1Yn: 0
+special1Opt: 00000
+special2Yn: 0
+special2Opt1: 000000
+special2Opt3: 000
+special2YYYY: 
+special2MM: 
+special2Opt2: 000
+special3Yn: 0
+cChildGb: c
+special3Opt: 00000000
+special3YYYY: 
+special3MM: 
+special3DD: 
+special4Yn: 0
+special5Yn: 0
+special5Opt: 000
+special6Yn: 0
+special6Opt: 000
+special7Yn: 0
+limitSpecial7Opt1: 12000
+special7Opt1: 00000
+special7Opt2: 00000
+special8Yn: 0
+special9Yn: 0

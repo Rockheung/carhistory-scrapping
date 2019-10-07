@@ -1,0 +1,80 @@
+
+### srchKidiCarInfo
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=srchKidiCarInfo
+&car_num=49무4046
+
+
+### car_maker
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=car_maker
+&car_maker=
+&car_name=
+&prod_year=
+&car_name_dtl=
+&car_opt=
+
+
+
+### car_name
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=car_name
+&car_maker=외산
+&car_name=
+&prod_year=
+&car_name_dtl=
+&car_opt=
+
+
+### prod_year
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=prod_year
+&car_maker=외산
+&car_name=Audi
+&prod_year=
+&car_name_dtl=
+&car_opt=
+
+
+### car_name_dtl
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=car_name_dtl
+&car_maker=외산
+&car_name=Audi
+&prod_year=2018B
+&car_name_dtl=
+&car_opt=
+
+
+### car_opt
+
+POST https://www.carhistory.or.kr/damoa/mobile/searchCarData.car
+Content-Type: application/x-www-form-urlencoded
+Referer: https://www.carhistory.or.kr/damoa/mobile/step1.car
+
+type=car_opt
+&car_maker=외산
+&car_name=Audi
+&prod_year=2018B
+&car_name_dtl=A6
+&car_opt=

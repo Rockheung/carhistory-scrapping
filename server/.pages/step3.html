@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+
+
+
+
+
+<!--[if IE 9]><html lang="ko" class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html class="DEBUG no-js _menu_open _help_open" lang="ko"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>카히스토리</title>
+  <meta property="og:title" content="카히스토리">
+ 
+  <!-- // 2017-08-23 수정 -->  
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel="apple-touch-icon" type="text/css"  href="apple-touch-icon.png"> 
+  <!--[if lt IE 9]><script src="/js/legacy.js"></script><![endif]-->
+	
+	<!-- 2017-09-19 추가 -->
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/preview.css">
+	<link rel="stylesheet" href="/css/print.css" media="print">	
+	<!-- 2018-11-27 추가 -->
+	<link rel="stylesheet" href="/base/css/jquery-ui-1.11.4.css">
+	
+	<script type="text/javascript" src="/base/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/base/js/jquery-ui-1.11.4.min.js"></script>
+	
+  	<script src="/js/plugins.min.js"></script>
+  	<script src="/js/main.js"></script>
+	<script src="/js/dev.js"></script>
+	
+	<script type="text/javascript" src="/base/js/common.js"></script>
+	<script type="text/javascript" src="/base/js/cookie.js"></script>
+	<script type="text/javascript" src="/base/js/validator.js"></script>
+	
+<script type="text/javascript">
+function setSearchBtnDisable() {
+	$("#stickySearchBtn").attr("disabled","true");
+	setSearchBtnAble();
+}
+			
+function setSearchBtnAble(){
+	setTimeout(function(){
+		$("#stickySearchBtn").removeAttr("disabled");
+	},500);
+}
+$(function() {		
+	
+	var CheckCarNo = function(carNo) {
+		var newCarNo = "";
+		if(8 == carNo.length && !(carNo.charAt(3) >= 0 && carNo.charAt(3) <= 9)) {
+			for(var index=0; index < carNo.length; index++) {
+				if(2 == index) {
+					newCarNo = newCarNo + "0" + carNo.charAt(index);
+				} else {
+					newCarNo = newCarNo + carNo.charAt(index);
+				}
+			}
+			return newCarNo;
+		} else if(6 == carNo.length && !(carNo.charAt(1) >= 0 && carNo.charAt(1) <= 9)) {
+			for(var index=0; index < carNo.length; index++) {
+				if(0 == index) {
+					newCarNo = newCarNo + "0" + carNo.charAt(index);
+				} else {
+					newCarNo = newCarNo + carNo.charAt(index);
+				}
+			}
+			return newCarNo;
+		} else {
+			return carNo
+		}
+	};
+	
+	
+	// stickySearchForm
+	var ssForm = $('form[name="stickySearchForm"]');		
+	ssForm.submit(function() {
+		setSearchBtnDisable();
+		//alert('decorator stickySearchForm 시작');
+		
+		var carnum = $('input[name="carnum"]', ssForm);
+		var carnumSel = $('[name="carnumSel"]', ssForm).val();
+		var carbodynum = $('[name="carbodynum"]', ssForm).val().trim();												
+		
+		// 차량번호
+		if (carnumSel == '0')
+		{
+			if(!carnum.val() || carnum.val() == '차량번호 입력') {
+
+				alert("차량번호를 입력하여 주십시요!");
+				carnum.focus();
+				return false;
+			}
+			if(carnum.val().length < 6) {
+				alert("차량번호를 정확히 입력하여 주십시요!");
+				carnum.val("");
+				carnum.focus();
+				return false;
+			}
+			
+			for(var i=0; i < carnum.val().length; i++) {
+				var ch = carnum.val().charCodeAt(i);
+				if((ch >= "1" && ch <= "47") || (ch >= "58" && ch <= "128")) {
+					//if (ch == 32) {
+					//	alert( "공백은 입력가능한 문자가 아닙니다.");
+					//}else{
+					if (ch != 32) {	
+						alert(carnum.val().charAt(i) + " 은(는) 입력가능한 문자가 아닙니다.");
+						carnum.val("");
+						carnum.focus();
+						return false;
+					}
+				}
+			}			
+		}
+		else
+		{
+			if( carbodynum == "" ) {
+
+				if(slang.equals("vn")) {
+					alert("Nhập mã VIN gồm 17 chữ số liền nhau, không cách.");
+				} else if(slang.equals("en")) {
+					alert("Please enter the 17 digit VIN without a space.");
+				} else if(slang.equals("mn")) {
+					alert("Зай авалгүй  17 оронтой VIN дугаараа оруулна уу.");
+				} else if(slang.equals("es")) {
+					alert("Por favor, ingrese el VIN de 17 dígitos sin espacio.");
+				} else if(slang.equals("sa")) {
+					alert("يرجى إدخال رقم تعريف المركبة المكون من 17 رقمًا بدون مسافات.");
+				} else if(slang.equals("ru")){
+					alert("Введите идентификационный номер из 17 знаков без пробела.");
+				} else {
+					alert("차대번호를 입력하여 주십시요!");
+				}
+				
+				carnum.focus();
+				return false;
+			}
+			if( carbodynum.length < 17 ) {
+				
+				if(slang.equals("vn")) {
+					alert("Nhập mã VIN gồm 17 chữ số liền nhau, không cách.");
+				} else if(slang.equals("en")) {
+					alert("Please enter the 17 digit VIN without a space.");
+				} else if(slang.equals("mn")) {
+					alert("Зай авалгүй  17 оронтой VIN дугаараа оруулна уу.");
+				} else if(slang.equals("es")) {
+					alert("Por favor, ingrese el VIN de 17 dígitos sin espacio.");
+				} else if(slang.equals("sa")) {
+					alert("يرجى إدخال رقم تعريف المركبة المكون من 17 رقمًا بدون مسافات.");
+				} else if(slang.equals("ru")) {
+					alert("Введите идентификационный номер из 17 знаков без пробела.");
+				} else {
+					alert("차대번호를 입력하여 주십시요!");
+				}
+				
+				carnum.val("");
+				carnum.focus();
+				return false;
+			}
+			//차대번호로 조회시, 말소 값으로 셋팅
+			$('#malsoGb0').val("2");			
+			carnum.val( carbodynum ); // 차대번호 -> 차량번호 변수에 셋팅하여 기존 로직 그대로 이용			
+		}
+
+		
+		if('Y' != getCookie('search_agree')) // 
+		{ 
+			//window.open('pop_main.car', '_blank', 'width=532,height=662, menubar=no,resizable=no,status=no,toolbar=no,location=no,scrollbars=yes,top=10,left=10');			
+			//window.showModalDialog('pop_main.car', 'arg', 'dialogWidth=532px; dialogHeight=662px; scroll=no; status=no');
+			//window.showModalDialog('pop_main.car', 'arg', 'dialogWidth=532px; dialogHeight=662px; menubar=no; resizable=no; status=no; toolbar=no; location=no; scrollbars=yes; top=10; left=10;');
+			
+			$('#limit-agree-modal').modal({
+				'show' : true,
+				'backdrop' : 'static',
+				'keyboard' : false
+			});
+			
+			function checkLimitAgree()
+			{			
+				if ( $('#limit-agree-modal #limit-modal-agree1').is(":checked") && $('#limit-agree-modal #limit-modal-agree2').is(":checked") )
+				{					
+					$('#limit-agree-modal').modal('hide');				
+					setCookie('search_agree','Y',null);
+					$('#stickySearchBtn').trigger('click');
+				}				
+			}
+			
+			$('#limit-agree-modal #limit-modal-agree1').click(function(e){
+				checkLimitAgree();
+			});
+			$('#limit-agree-modal #limit-modal-agree2').click(function(e){
+				checkLimitAgree();
+			});
+			$('#limit-agree-modal #allAgree').click(function(e){
+
+				$('#limit-agree-modal #limit-modal-agree1').prop("checked","checked");
+				$('#limit-agree-modal #limit-modal-agree2').prop("checked","checked");
+				checkLimitAgree();
+			});	
+		}
+		
+		if('Y' != getCookie('search_agree')) // 
+		{ 			
+			return false;
+		}
+	});
+	
+	$("#lb_viewform").click(function(e){
+		e.target.value = "";
+	});
+});
+</script>	
+<!--[if lte IE 9]
+	<script src="/base/js/IE9.js"></script>
+<![endif]-->
+
+</head>
+
+
+	<body class="ko">
+
+
+<!-- // 상단메뉴, 좌측메뉴 현재 위치 표시//-->
+<!-- 2017-09-07 제공정보의 누락, 오류 등 서비스의 한계 -->
+	<!-- agreement Modal -->
+	<div class="modal fade modal-generic modal-agreement" id="limit-agree-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				
+				
+					<h4 class="modal-title" id="myModalLabel">제공정보의 누락, 오류 등 서비스의 한계</h4>
+				
+				
+				</div>
+				<div class="modal-body with-header">
+					<div class="modal-outer-container">
+						<div class="modal-inner-container custom-scroll-container">
+							<div class="button-area border-bottom-gray text-center">
+							
+								<button type="button" id="allAgree" class="btn btn-default">전체동의</button>
+							
+				
+							</div>
+							
+							
+							<div class="agreement-title">
+								<div class="pull-left title">카히스토리서비스는</div>
+							</div>
+							<div class="scroll-box custom-scroll-container line-box bg-white">
+								<div class="paper">
+									<p>
+										공익제고 차원에서 자동차보험 사고정보를 이용하여 제공되는 서비스이나 별도의 시스템운영비용이 소요됨에 따라, 수익자부담원칙을 적용해 유료 서비스로 운영되고 있습니다. 또한, 손해보험사의 ’96년 이후 자동차보험 사고자료 등이 기초로 제공되며, 손해보험사에 보험사고발생 사실이 신고되지 않았거나 보험사고처리가 되지 않은 사항은 제공되지 않습니다. 
+									</p>
+								</div>
+							</div>
+							
+							<div class="line-box bg-lightgray padding-box padding-small">
+								<div class="row">
+									
+									<div class="col-xs-12 col-md-9 text-center-xs text-center-sm text-left-md">
+										<span class="feature-text-large color-gray2">본인은 위 사항에 대하여 확인하였습니다.</span>
+									</div>
+									<div class="col-xs-12 col-md-3 text-center-xs text-center-sm text-right-md">
+										<span class="checkbox"><input type="checkbox" name="agreement" id="limit-modal-agree1" /> <label for="limit-modal-agree1" class="color-key">확인하기</label></span>
+									</div>
+									
+								</div>								
+							</div>
+
+							<div class="scroll-box custom-scroll-container line-box bg-white">
+								<div class="paper">
+								
+									<p>
+										기초자료를 제공하는 정보원천기관이 사정에 따라 사고내용이 변경되거나 지연제공 될 수 있으며, 제공 데이터의 오류나 처리과정의 착오로 인하여 정확하지 않은 정보가 제공될 수 있어, 구입하고자 하는 중고차량이 상태를 차주 문의 실차 점검, 중고차성능, 상태점검기록부 등을 통해 최종확인 하십시오. 카히스토리는 단순보조정보로써만 사용하실 것을 당부드립니다.
+									</p>
+								
+								</div>
+							</div>
+							<div class="line-box bg-lightgray padding-box padding-small">
+								<div class="row">
+									
+									<div class="col-xs-12 col-md-9 text-center-xs text-center-sm text-left-md">
+										<span class="feature-text-large color-gray2">
+											본인은 위 사항에 대하여 확인하였으며, <span class="md-br"></span>
+											카히스토리 정보오류로 인한 어떠한 법적 책임도 요구하지 않겠습니다.
+										</span>
+									</div>
+									<div class="col-xs-12 col-md-3 text-center-xs text-center-sm text-right-md">
+										<span class="checkbox"><input type="checkbox" name="agreement" id="limit-modal-agree2" /> <label for="limit-modal-agree2" class="color-key">동의하기</label></span>
+									</div>
+									
+								</div>								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- // 2017-09-07 제공정보의 누락, 오류 등 서비스의 한계 -->	
+	<!-- 최상단 메뉴 시작 -->
+	
+		
+
+
+
+<header id="header" class="_sticky">
+	<div class="container">
+		<div class="logo"><a href="/"><img src="/img/logos/logo.png" alt="CarHistory" /></a></div>
+		<div class="allMenu">
+			<button type="button">
+				<div class="open"><i class="icon-font icon-menu"></i><span>전체메뉴</span></div>
+				<div class="close"><i class="icon-font icon-menu-close"></i><span>닫기</span></div>
+			</button>
+		</div>
+		<div class="helpMenu">
+			<button type="button"><i class="icon-font icon-help"></i></button>
+		</div>
+		
+			
+				<div class="utilMenu">
+					<ul>			
+						<li><a href="/login/login.car">충전회원</a></li>
+						<li style="vertical-align:middle;">
+							<a href="https://www.kidi.or.kr">
+								<img src="/img/logos/banner_gray2.png" width="20" height="18" style="vertical-align:text-top"/>보험개발원
+							</a>
+						</li>
+									
+
+						
+						<div class="select-language">
+							<span class="dropdown">
+								<i class="icon-font icon-language"></i>
+								<a role="button" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">LANG<span class="icon-font icon-sort-down"></span></a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<!--  <li><a href="">영어(EN)</a></li> -->
+									<li><a href="#" lang="en" onclick="javascript:goMain(lang);">영어(EN)</a></li>
+									<li><a href="#" lang="vn" onclick="javascript:goMain(lang);">베트남(VN)</a></li>
+									<li><a href="#" lang="es" onclick="javascript:goMain(lang);">에스파냐(ES)</a></li>
+									<li><a href="#" lang="sa" onclick="javascript:goMain(lang);">아랍(SA)</a></li>
+									<li><a href="#" lang="ru" onclick="javascript:goMain(lang);">러시아(RU)</a></li>
+									<li><a href="#" lang="mn" onclick="javascript:goMain(lang);">몽골어(MN)</a></li>
+								</ul>
+							</span>
+						</div>
+					</ul>
+				</div>
+			
+			
+			
+	</div>
+</header>
+
+<!-- 20170823 HJS 메인에서 돋보기 클릭시 시작 -->
+<div class="help-menu">
+	<div class="hele-container">
+		<div class="help-header">
+			자주 묻는 질문
+			<button type="button">
+				<i class="icon-font icon-menu-close"></i>
+			</button>
+		</div>
+		<div class="help-content">
+			<div class="content-head">용어설명</div>
+			<div class="content-body">
+				<ol>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-1-1" aria-expanded="false" aria-controls="helpmenu-1-1">대물배상담보</a>
+						<div class="collapse" id="helpmenu-1-1">
+							<div class="collapse-content">
+								자동차를 소유, 사용, 관리하는 동안에 생긴 자동차의 사고로 남의 재물을 멸실, 파손 또는 오손하여 법률상 손해배상책임을 짐으로써 입은 손해에 대해서 보험금을 지급하는 자동차보험의 담보종류입니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-1-2" aria-expanded="false" aria-controls="helpmenu-1-2">도난보험사고</a>
+						<div class="collapse" id="helpmenu-1-2">
+							<div class="collapse-content">
+								자동차를 도난 당하여 경찰서에 신고한지 30일이 지나도록 도난 당한 자동차를 찾지 못하여 자동차보험에서 보상처리 받은 사고입니다(자동차보험 자기차량손해담보에 가입한 경우에만 제공가능)
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-1-3" aria-expanded="false" aria-controls="helpmenu-1-3">미확정사고</a>
+						<div class="collapse" id="helpmenu-1-3">
+							<div class="collapse-content">
+								자동차보험사고로 보험회사에 접수된 후 사고처리가 끝나지 않아 지급할 보험금액이 아직 확정되지 않은 사고를 말합니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-1-4" aria-expanded="false" aria-controls="helpmenu-1-4">보험금</a>
+						<div class="collapse" id="helpmenu-1-4">
+							<div class="collapse-content">
+								자동차보험에서 보험사고가 발생하여 손해가 생겼을 경우 보험회사가 지급하는 보상금으로 자기부담금과 과실상계액등이 제외된 금액을 말합니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-1-5" aria-expanded="false" aria-controls="helpmenu-1-5">수리비</a>
+						<div class="collapse" id="helpmenu-1-5">
+							<div class="collapse-content">
+								자동차사고로 자동차가 손상된 경우 보험회사가 지급하는 보험금 중에서 자동차 운반비, 대차료(렌트비용), 휴차료 등 간접손해와 과실상계액 등을 제외한, 자동차를 수리하는데 소요되는 직접적인 비용으로 부품비용, 공임 및 도장료로 이루어집니다.
+							</div>
+						</div>
+					</li>
+				</ol>
+				<div class="more">
+					<a href="/guide/dictionary.page">더보기 <i class="icon-font icon-angle-right"></i></a>
+				</div>
+			</div>
+			<div class="content-head">FAQ</div>
+			<div class="content-body">
+				<ol>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-2-1" aria-expanded="false" aria-controls="helpmenu-2-1">수리비와 보험금의 차이</a>
+						<div class="collapse" id="helpmenu-2-1">
+							<div class="collapse-content">
+								카히스토리에서 제공되는 수리비와 보험금의 차이는 다음과 같습니다. 먼저, 수리비용은 말 그대로 해당 사고로 인하여 차량을 수리를 하는데 소요된 비용을 의미하며, 보통 수리비용은 부품/공임/도장 의 3가지로 분류가 됩니다. 반면에 보험금의 경우는 실제 차량을 수리하는 비용이 아니라 해당 사고로 인하여 보험회사에서 지급된 금액의 최종 결산금액을 의미합니다. 보통 보험회사에서 차량의 수리를 진행하지 않고 차주가 현금으로 보상을 받는 경우, 수리에 대한 세부정보가 부재하여 카히스토리에 보험금으로 안내가 됩니다. 이 경우, 과실비율에 따라서 본인의 과실에 대한 비율이 공제되거나 렌트카 대여비 등이 포함될 수 있기 때문에 정확한 사고의 크기를 나타낸다고 보기는 어렵습니다. 다만, 카히스토리에는 과실비율 등 구체적인 사고 내용이 확인 되지 않기 때문에, 선택의 여지 없이 보험금으로 인해 대략적으로 사고에 대한 크기만을 확인하기 위한 목적으로 제공하고 있습니다. 따라서, 보험금보다는 수리비가 조금 더 보험사고에 대한 구체적인 정보라고 할 수 있습니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-2-2" aria-expanded="false" aria-controls="helpmenu-2-2"> 사고에 대한 세부내역(상세내역) 등 구체적인 내용 확인이 가능한가요?</a>
+						<div class="collapse" id="helpmenu-2-2">
+							<div class="collapse-content">
+								카히스토리 보고서는 보험사에서 보상 처리한 자동차 사고에 대한 사고날짜와 대략적인 수리금액만을 제공하는 보조자료입니다. 안타깝지만 사고에 대한 보다 구체적인 내용은 확인이 어렵습니다. 보험개발원은 요율산출기관으로 사고에 대한 통계 데이터만 가지고 있을 뿐, 사고 처리에 대한 구체적인 정보는 수집하지 않고 있습니다. 더불어 보험계약 및 사고에 관한 자세한 내용은 개인정보에 해당됩니다. 따라서, 보험사가 보유하고 있는 사고에 대한 보다 자세한 내용은 해당 보험사에 보험계약자로 계신분(본인)을 통해서만(현재 차주 포함 안됨) 확인이 가능함을 안내드립니다. 사고에 대한 모든 내용을 상세하게 안내해드리고 싶지만 법적문제 등으로 그렇지 못한 점을 양해부탁드리겠습니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-2-3" aria-expanded="false" aria-controls="helpmenu-2-3">영수증 출력이 가능한가요?</a>
+						<div class="collapse" id="helpmenu-2-3">
+							<div class="collapse-content">
+								안녕하십니까 카히스토리는 전자결제를 LG U+ 에서 대행하고 있습니다. 따라서 LG U+ 전자결제 홈페이지에서 결제하신 정보(신용카드 번호 및 휴대폰 번호 등)를 입력하신 후에 영수증 출력이 가능합니다. 아래의 주소를 클릭해주시기 바랍니다. http://pgweb.uplus.co.kr:8080/pg/wmp/etc/jsp/SettlementSearchr.jsp *접속 불가시 LG U+ 홈페이지 ( http://ecredit.uplus.co.kr/ ) 우측 하단에 "거래내역 조회"를 클릭하시기 바랍니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-2-4" aria-expanded="false" aria-controls="helpmenu-2-4">정보 이용 수수료</a>
+						<div class="collapse" id="helpmenu-2-4">
+							<div class="collapse-content">
+								카히스토리 서비스는 2017년 2월 7일 부터 이용 수수료를 변경하였습니다. 일반 중고차 소비자가 1년에 2~3대의 차량을 사고이력정보를 통해 조회하는 것으로 파악 되어 1년 동안 5대의 차량에 대하여 건당 770원의 수수료가 부가 되며, 6회부터는 건당 2,200원의 수수료를 결제 하셔야 정보 조회가 가능 합니다. 감사합니다.
+							</div>
+						</div>
+					</li>
+					<li>
+						<a role="button" data-toggle="collapse" data-target="#helpmenu-2-5" aria-expanded="false" aria-controls="helpmenu-2-5">미확정 이란 의미가 뭔가요?</a>
+						<div class="collapse" id="helpmenu-2-5">
+							<div class="collapse-content">
+								보험회사에서 자동차사고를 접수 후 수리, 보험금지급, 데이터 전송 및 반영 후 저희 보험개발원 카히스토리에 최종 반영되기까지 2.5개월~3개월 가량의 시간이 소요됩니다. 해당 기간중에는 "수리비 미확정" 사고로 분류되고 있습니다. 다만, 보험사에서 해당 차량 복원을 위한 수리비 견적 금액은 알 수 있으나, 이 또한 매일 변동되는 자료로서 정확한 금액은 아닙니다. 또한 처음 접수 되었다가 최종 지급된 금액이 없을 경우에도 미확정으로 표시 될 수 있습니다.
+							</div>
+						</div>
+					</li>
+				</ol>
+				<div class="more">
+					<a href="/customer/faq/list.car">더보기 <i class="icon-font icon-angle-right"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 20170823 HJS 메인에서 돋보기 클릭시 종료 -->
+
+<div class="desktop-menu">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-2">
+				<div class="depth1">
+					<a href="/search/carhistory/search.car">사고이력조회</a>
+				</div>
+				<div class="depth2">
+					<ul>
+						<li><a href="/serviceInfo/carhistory.page">카히스토리란?</a></li>
+
+						<!-- 충전회원 전용 -->
+						
+						<!-- //충전회원 전용 -->
+						<li><a href="/guide/dictionary.page">용어설명</a></li>
+						<li><a href="/information/information.page">중고차 구입요령</a></li>
+						<li><a href="/main.car?stdGubun=Y">기준일자 사고이력조회</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="depth1">
+					<a href="/search/carhistory/freeSearch.car">무료 서비스</a>
+				</div>
+				<div class="depth2">
+					<ul>
+					    <li><a href="/damoa/mobile/step1.car"><font color='red'>보험료비교조회(신규)</font></a></li>
+					    <li><a href="/search/carhistory/scrapSearch.car">무료폐차사고조회</a></li>
+						<li><a href="/search/carhistory/freeSearch.car">무료침수사고조회</a></li>
+
+						<li><a href="/search/research/research.car">재조회</a></li>
+						<li><a href="/statistic/popular/list.car">인기차종조회</a></li>
+						<li><a href="/statistic/avgAccidentInfo/list.car">모델별 차량분석</a></li>
+						<li><a href="/information/carstandardamnt.page">차량 기준가액</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="depth1">
+					<a href="/customer/faq/list.car">고객센터</a>
+				</div>
+				<div class="depth2">
+					<ul>
+						<li><a href="/customer/faq/list.car">자주 묻는 질문</a></li>
+						<li><a href="/customer/qna/list.car">고객문의</a></li>
+						<li><a href="/customer/alliance.page">제휴문의</a></li>
+						<li><a href="/customer/epilogue/list.car">사용후기</a></li>
+						<li><a href="/event/eventList.car">이벤트</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="module-box-container bg1">
+					<div class="head">자동차보험료 조회</div>
+					<div class="body">
+						손해보험협회에서 제공하는 <br /><a href='/damoa/mobile/step1.car'>보험다모아서비스</a>와 연계하여<br /> 카히스토리에서 자동차보험료를<br /> 비교해볼 수 있습니다.
+					</div>
+					<div class="detail">
+					
+						<a href="/damoa/mobile/step1.car">자세히 보기 <i class="icon-font icon-angle-right"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="module-box-container bg2">
+					<div class="head">인기 차종조회</div>
+					<div class="body">
+						본 정보는 카히스토리를 통해 <br />
+						사고이력조회한 차량을 분석한 <br />
+						통계정보입니다
+					</div>
+					<div class="detail">
+						<a href="/statistic/popular/list.car">자세히 보기 <i class="icon-font icon-angle-right"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="mobile-nav-container">
+	<div class="inside-container">
+		<ul class="mobile-nav">
+			<li><a href="/">홈으로</a></li>
+			<li><a href="/serviceInfo/carhistory.page">카히스토리란?</a></li>
+
+			<!-- 충전회원 전용 -->
+			
+			<!-- // 충전회원 전용 -->
+			<li><a href="/guide/dictionary.page">용어 설명</a></li>
+			<li><a href="/information/information.page">중고차 구입요령</a></li>
+			<li>
+				<a role="button" data-toggle="collapse" data-target="#submenu-6" aria-expanded="false" aria-controls="submenu-6">
+					무료서비스
+					<span class="collapse-btn"><i class="box"></i></span>
+				</a>
+				<div class="collapse" id="submenu-6">
+					<ul>
+						<li><a href="/damoa/mobile/step1.car"><font color='red'>자동차보험료조회(신규)</font></a></li>
+						<li><a href="/search/carhistory/scrapSearch.car">무료폐차사고조회</a></li>
+						<li><a href="/search/carhistory/freeSearch.car">무료침수사고조회</a></li>
+						<li><a href="/search/research/research.car">재조회</a></li>
+						<!-- <li><a href="/statistic/popular/list.car">인기차종조회</a></li> -->
+						<li><a href="/statistic/avgAccidentInfo/list.car">모델별 차량분석</a></li>
+						<li><a href="/information/carstandardamnt.page">차량 기준가액</a></li>
+					</ul>
+				</div>
+			</li>
+			<li>
+				<a role="button" data-toggle="collapse" data-target="#submenu-7" aria-expanded="false" aria-controls="submenu-7">
+					고객센터
+					<span class="collapse-btn"><i class="box"></i></span>
+				</a>
+				<div class="collapse" id="submenu-7">
+					<ul>
+						<li><a href="/customer/faq/list.car">자주 묻는 질문</a></li>
+						<li><a href="/customer/qna/list.car">고객문의</a></li>
+						<li><a href="/customer/alliance.page">제휴문의</a></li>
+						<li><a href="/customer/epilogue/list.car">사용후기</a></li>
+						<li><a href="/event/eventList.car">이벤트</a></li>
+					</ul>
+				</div>
+			</li>
+			<!-- 충전회원 전용 -->
+			
+			<!-- // 충전회원 전용 -->
+		</ul>
+		<div class="mobile-util-menu">
+			<ul>
+				<li>
+					
+						
+							<a href="/login/login.car">
+								<i class="icon-font icon-login"></i>
+								충전회원
+							</a>
+						
+						
+					
+				</li>
+				<li>
+					<a href="/guide/smartphone.page">
+						<i class="icon-font icon-app-down"></i>
+						앱설치
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+	
+	<!-- 최상단 메뉴 끝 -->
+
+
+	<!--- ### 페이지 시작 --->
+
+	
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css_damoa/style_insu.css">
+<link rel="stylesheet" href="/css_damoa/preview_insu.css">
+<!-- 2018-11-27 추가 -->
+<link rel="stylesheet" href="/css_damoa/jquery-ui-1.11.4.css">
+
+<script type="text/javascript">
+	function fncPrint(){
+		var win=null;
+	   win=open("","PrintWindow");
+	   
+	   if($("#detailBtn02").length > 0){
+			document.getElementById("detailBtn02").style.display = "none";
+		}
+		if($("#detailBtn03").length > 0){
+			document.getElementById("detailBtn03").style.display = "none";
+		}
+	
+		document.getElementById("printBtn").style.display = "none";
+		document.getElementById("topDiv").style.display = "none";
+		document.getElementById("doctor-deco-img").style.display = "none";
+		document.getElementById("hero-sub-id").style.display = "none";
+		
+	//		var contents = $("#printContent").html();
+		
+	   win.document.open();
+	   //win.document.write("<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>");
+	   win.document.write("<!DOCTYPE html>");
+	   win.document.write("<html class='preview print'>");
+	   win.document.write("<head>");
+	   win.document.write("<title>Carhistory</title>");
+	   win.document.write("<meta http-equiv='Content-TYPE' content='text/html; charset=utf-8' />");
+	   win.document.write("<meta http-equiv='X-UA-Compatible' content='IE=Edge' />");
+	   win.document.write("<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0'>");
+	   
+	   win.document.write("<link rel='stylesheet' href='/css/style.css' >");
+	   win.document.write("<link rel='stylesheet' href='/css_damoa/style_insu.css' >");
+	   win.document.write("<link rel='stylesheet' href='/css/preview.css' >");
+	   win.document.write("<link rel='stylesheet' href='/css_damoa/preview_insu.css' >");		   
+	   win.document.write("<link rel='stylesheet' href='/css/print.css' media='print' >");
+	   win.document.write("<link rel='stylesheet' href='/css_damoa/jquery-ui-1.11.4.css' >");		   
+	   
+	   win.document.write("</head>");
+	   win.document.write("<body>");
+	   var contents = $("#printContent").html();
+	   win.document.write( contents );
+	
+	   win.document.write("</body>");
+		
+		//Delay 처리
+	   win.document.write('<script>(' + (function() {
+	   	  function checkReadyState() {
+		        if (document.readyState === 'complete') {
+		            window.focus();
+		            window.print();
+		            window.close();
+		        } else {
+		            setTimeout(checkReadyState, 500); // May need to change interval
+		        }
+		    }
+		    checkReadyState();
+		}) + ')();</sc' + 'ript>');		  			
+		
+	   win.document.write("</html>");			
+	   win.document.close();
+	   win.focus();
+	//	   win.print();
+	   
+	   //win.close();
+	   //win.document.close();win.self.close();
+	   
+	//	   if($("#detailBtn02").length > 0){
+	//			document.getElementById("detailBtn02").style.display = "block";
+	//		}
+	//		if($("#detailBtn03").length > 0){
+	//			document.getElementById("detailBtn03").style.display = "block";
+	//		}
+		
+		document.getElementById("printBtn").style.display = "block";
+		document.getElementById("topDiv").style.display = "block";
+		document.getElementById("doctor-deco-img").style.display = "block";
+		document.getElementById("hero-sub-id").style.display = "block";
+	}
+
+	$(function(){
+		$('#image-modal').on('show.bs.modal', function (event) {			
+			var button = $(event.relatedTarget);
+			var src = button.data('img');
+			//console.log(src);
+			var modal = $(this);
+			modal.find("#in-image").attr('src', src);				
+		});	
+		
+		$('#allShowBtn').click(function(e){
+			e.preventDefault();
+			$('#allShowBtn').addClass('hidden');
+			$('#allHideBtn').removeClass('hidden');
+			$('.result-area').each(function(idx){
+				$(this).collapse('show');
+			});
+		});
+		
+		$('#allHideBtn').click(function(e){
+			e.preventDefault();
+			$('#allHideBtn').addClass('hidden');
+			$('#allShowBtn').removeClass('hidden');
+			$('.result-area').each(function(idx){
+				$(this).collapse('hide');
+			});
+		});
+	});
+</script>
+<div class="wrapper">
+	<section class="hero-sub" id="hero-sub-id" style="background-image:url('/img/bg/insur_mobile.png');">
+		<div class="container">
+			<h1 class="sub-hero-title">자동차 보험료 조회결과</h1>
+		</div>
+	</section>
+	
+    <div class="insurance_step_area">
+    	<div class="box">
+			<div class="step1">
+				<div class="pic">
+					<img src="/img/insurance/self.png" alt="개인정보 제공동의" />
+				</div>
+				<div class="cont_l">
+				    <div class="tt">Step 1</div>
+					<div class="tit">
+						<span>개인정보 제공동의</span>
+					</div>
+					<!-- <div class="txt">
+						 자동차보험료 산출 과정에서 개인정보를 보호하기 위해본인을 확인합니다.
+					</div> -->
+				</div>
+			</div>
+			<div class="arrow">
+				<img src="/img/icon/arrow_r.png" alt="다음단계 화살표" />
+			</div>
+			<div class="step2">
+				<div class="pic">
+					<img src="/img/insurance/selection.png" alt="담보 및 특약선택" />
+				</div>
+				<div class="cont_l">
+				    <div class="tt">Step 2</div>
+					<div class="tit">
+						<span>담보 및 특약선택</span>
+					</div>
+					<!-- <div class="txt">
+						 원하시는 담보내용 및 귀하만의<br>  특약을 입력해 주세요.
+					</div> -->
+				</div>
+			</div>
+			<div class="arrow">
+				<img src="/img/icon/arrow_r.png" alt="다음단계 화살표" />
+			</div>
+			<div class="step1">
+				<div class="pic pic3">
+					<img src="/img/insurance/result_ov.png" alt="자동차보험료 확인">	
+				</div>
+				<div class="cont_l">
+				    <div class="tt">Step 3</div>
+					<div class="tit">
+						<span>자동차보험료 확인</span>
+					</div>
+					<!-- <div class="txt">
+						 보험다모아와 연계된 각 보험사의 견적내용을 알려드립니다.
+					</div> -->
+				</div>
+			</div>
+		</div>    
+		<div class="box_m">
+			<div class="step1">
+				<div class="pic">
+					<img src="/img/insurance/self_m.png" alt="본인확인" />
+				</div>
+				<div class="cont_l">
+					<div class="tit">
+						<span>본인확인</span>
+					</div>
+				</div>
+			</div>
+			<div class="arrow">
+				<img src="/img/icon/arrow_r_m.png" alt="다음단계 화살표" />
+			</div>
+			<div class="step2">
+				<div class="pic">
+					<img src="/img/insurance/selection_m.png" alt="담보 및 특약" />
+				</div>
+				<div class="cont_l">
+ 					<div class="tit">
+						<span>담보 및 특약선택</span>
+					</div>
+				</div>
+			</div>
+			<div class="arrow">
+				<img src="/img/icon/arrow_r_m.png" alt="다음단계 화살표" />
+			</div>
+			<div class="step3">
+				<div class="pic pic3">
+					<img src="/img/insurance/result_m_ov.png" alt="결과확인">	
+				</div>
+				<div class="cont_l">
+					<div class="tit">
+						<span>결과확인</span>
+					</div>
+				</div>
+			</div>			
+		</div>
+    </div>
+    
+	<div class="history-nav bg-lightgray">
+		<div class="container">
+			<ul>
+				<li>Home</li>
+				<li>자동차 보험료 조회</li>
+				<li>자동차 보험료 확인</li>
+			</ul>
+		</div>
+	</div>
+    
+    
+
+
+
+
+	
+	
+	
+
+
+
+	<script type="text/javascript">
+ 	
+	$(document).ready(function() {
+	 	
+		selectForm("car_maker");
+	    $( "#searchBtn2" ).click(function() {
+	    	var d = $("select[id=car_opt] > option:selected").val();
+	    	
+	    	setFrom(d);
+	    	
+	    	showCarSummary("show");
+			
+		 	location.href = "/damoa/mobile/step2.car";
+		 	
+		});
+	    $( "#searchBtn3" ).click(function() {
+	    	srchKidiCar();
+		});
+	 	$("input[name='car_num'").keypress(function(event) {
+		    if (event.which == 13) {
+		        event.preventDefault();
+			    
+			    srchKidiCar();
+				
+		    }
+		});
+	    
+	    showCarSummary("show");
+	    	
+	    
+	    
+	    
+	});
+	
+	function showDirectInputForm() {
+	    if($("#car_info").css("display") == "none"){   
+	        jQuery('#car_info').show();  
+	        showCarSummary("");
+	    } else {  
+	        jQuery('#car_info').hide();  
+	    }  
+	}
+	function showCarSummary(data) {
+	    if(data == "show"){   
+	        jQuery('#car_summary').show();  
+	        jQuery('#car_info').hide();  
+	    } else {  
+	        jQuery('#car_summary').hide();  
+	    }  
+	}	
+
+	//조회
+	function selectForm(id) {
+		$.ajax({
+			method: 'POST',
+			url: 'searchCarData.car',
+			data: {
+				type: id
+				, car_maker: $("select[id=car_maker] > option:selected").val()
+				, car_name: $("select[id=car_name] > option:selected").val()
+				, prod_year: $("select[id=prod_year] > option:selected").val()
+				, car_name_dtl: $("select[id=car_name_dtl] > option:selected").val()
+				, car_opt: $("select[id=car_opt] > option:selected").val()
+			},
+			dataType: 'json',
+			success: function(json) {
+				
+				if (json.result == '1') {
+					if (id == 'car_maker') {
+						showCarMaker(json.list);
+					} else if (id == 'car_name') {
+						showCarName(json.list);
+					} else if (id == 'prod_year') {
+						showProdYear(json.list);
+					} else if (id == 'car_name_dtl') {
+						showCarNameDtl(json.list);
+					} else if (id == 'car_opt') {
+						showCarOpt(json.list);
+					}
+				} else {
+					
+				} 
+				
+				//jQuery('#car_summary').show();
+			},
+			error: function(request, status, error) {
+				
+			}
+		});
+		
+	}//end selectForm
+	
+	function showCarMaker(data) {
+		$("#car_maker").empty().data("option");	
+		$("<option></option>").attr("value", "").text(":: 제조사 선택 ::").appendTo("#car_maker");
+		$.each(data, function(index, entryList) {
+			////console.log(entryList.car_maker + "/" + entryList.car_maker);
+			$(entryList).each(function(i, data) {
+				$("<option></option>")
+					.attr("value", entryList.car_maker)
+					.text(entryList.car_maker)
+					.appendTo("#car_maker");
+			});
+		});
+	}
+
+	function showCarName(data) {
+		$("#car_name").empty().data("option");
+		$("#prod_year").empty().data("option");
+		$("#car_name_dtl").empty().data("option");
+		$("#car_opt").empty().data("option");
+		$("#ins_car_name").val();
+		$("#ins_car_name_code").val();
+		$("#ins_car_name_code_type").val();
+		$("#ins_car_made_ym").val();
+		$("<option></option>").attr("value", "").text(":: 차종 선택 ::").appendTo("#car_name");
+		$("<option></option>").attr("value", "").text(":: 자동차 등록연도(년/월) ::").appendTo("#prod_year");
+		$("<option></option>").attr("value", "").text(":: 세부 차량명  선택 ::").appendTo("#car_name_dtl");
+		$("<option></option>").attr("value", "").text(":: 세부 차량옵션 선택 ::").appendTo("#car_opt");
+		$.each(data, function(index, entryList) {
+			//console.log(entryList.car_name + "/" + entryList.car_name);
+			$(entryList).each(function(i, data) {
+				$("<option></option>")
+					.attr("value", entryList.car_name)
+					.text(entryList.car_name)
+					.appendTo("#car_name");
+			});
+		});
+	}
+
+	function showProdYear(data) {
+		$("#prod_year").empty().data("option");
+		$("#car_name_dtl").empty().data("option");
+		$("#car_opt").empty().data("option");
+		$("#ins_car_name").val();
+		$("#ins_car_name_code").val();
+		$("#ins_car_name_code_type").val();
+		$("#ins_car_made_ym").val();
+		$("<option></option>").attr("value", "").text(":: 자동차 등록연도(년/월) ::").appendTo("#prod_year");
+		$("<option></option>").attr("value", "").text(":: 세부 차량명  선택 ::").appendTo("#car_name_dtl");
+		$("<option></option>").attr("value", "").text(":: 세부 차량옵션 선택 ::").appendTo("#car_opt");
+		$.each(data, function(index, entryList) {
+			
+			$(entryList).each(function(i, data) {
+				if(entryList.prod_year.substring(4,5) == "A"){
+					entryList.prod_year_name = entryList.prod_year_name + " 이후 등록차량";
+				}else if(entryList.prod_year.substring(4,5) == "B"){
+					entryList.prod_year_name = entryList.prod_year_name + " 이전 등록차량";
+				}else{
+					entryList.prod_year_name = entryList.prod_year_name;
+				}
+				$("<option></option>")
+					.attr("value", entryList.prod_year)
+					.text(entryList.prod_year_name)
+					.appendTo("#prod_year");
+			});
+		});
+	}
+
+	function showCarNameDtl(data) {
+		$("#car_name_dtl").empty().data("option");
+		$("#car_opt").empty().data("option");
+		$("#ins_car_name").val();
+		$("#ins_car_name_code").val();
+		$("#ins_car_name_code_type").val();
+		$("#ins_car_made_ym").val();
+		$("<option></option>").attr("value", "").text(":: 세부 차량명  선택 ::").appendTo("#car_name_dtl");
+		$("<option></option>").attr("value", "").text(":: 세부 차량옵션 선택 ::").appendTo("#car_opt");
+		$.each(data, function(index, entryList) {
+			//console.log(entryList.car_name_dtl + "/" + entryList.car_name_dtl);
+			$(entryList).each(function(i, data) {
+				$("<option></option>")
+					.attr("value", entryList.car_name_dtl)
+					.text(entryList.car_name_dtl)
+					.appendTo("#car_name_dtl");
+			});
+		});
+	}
+
+	function showCarOpt(data) {
+		$("#car_opt").empty().data("option");
+		$("#ins_car_name").val();
+		$("#ins_car_name_code").val();
+		$("#ins_car_name_code_type").val();
+		$("#ins_car_made_ym").val();
+		$("<option></option>").attr("value", "").text(":: 세부 차량옵션 선택 ::").appendTo("#car_opt");
+		$.each(data, function(index, entryList) {
+			//console.log(entryList.car_opt + "/" + entryList.car_opt);
+			$(entryList).each(function(i, data) {
+				$("<option></option>")
+					.attr("value", entryList.car_opt + "||" + entryList.car_maker + "||" + entryList.car_name + "||" + entryList.ins_car_name_code + "||" + entryList.ins_car_name_code_type + "||" + entryList.car_maker_year + "||" + entryList.car_name_dtl + "||" + entryList.prod_year_name + "||" + entryList.car_quota + "||" + entryList.prod_year)
+					.text(entryList.car_opt)
+					.appendTo("#car_opt");
+			});
+		});
+	}
+	
+	function setFrom(data) {
+		
+		if(data != undefined && data != null){
+			
+			$("input[name='isCarSearch']").val("true");
+			$("input[name='ins_car_name']").val (data.split("||")[2]);
+			$("input[name='ins_car_name_code']").val (data.split("||")[3]);
+			$("input[name='ins_car_name_code_type']").val (data.split("||")[4]);
+			$("input[name='ins_car_made_ym']").val (data.split("||")[9]);
+			$( '#cMaker' ).text(data.split("||")[1]);
+			$( '#cName' ).text(data.split("||")[2]);
+			$( '#cNameDtl' ).text(data.split("||")[6]);
+			$( '#cOpt' ).text(data.split("||")[0]);
+			var _cProdYear = "";
+			if(data.split("||")[9].substring(4,5) == "A"){
+				_cProdYear = data.split("||")[7] + " 이후 등록차량";
+			}else if(data.split("||")[9].substring(4,5) == "B"){
+				_cProdYear = data.split("||")[7] + " 이전 등록차량";
+			}else{
+				_cProdYear = data.split("||")[7];
+			}
+			$( '#cProdYear' ).text(_cProdYear);
+	
+
+			$.ajax({
+				method: 'POST',
+				url: 'searchCarData.car',
+				data: {
+					type: "setCarInfo"
+					, car_num: $("input[name='car_num']").val()
+					, ins_car_name: $("input[name='ins_car_name']").val()
+					, ins_car_name_code: $("input[name='ins_car_name_code']").val()
+					, ins_car_name_code_type: $("input[name='ins_car_name_code_type']").val()
+					, ins_car_made_ym: $("input[name='ins_car_made_ym']").val()
+					, cMaker: $( '#cMaker' ).text()
+					, cName: $( '#cName' ).text()
+					, cNameDtl: $( '#cNameDtl' ).text()
+					, cOpt: $( '#cOpt' ).text()
+					, cProdYear: $( '#cProdYear' ).text()
+				},
+				dataType: 'json',
+				success: function(json) {
+				 	
+				 	showCarSummary("show");
+					//console.log("setFrom : "+json.result);
+					/* if (json.result == '1') {
+						console.log("seq:"+json.result);
+						
+					} else {
+					} */
+				},
+				error: function(request, status, error) {
+					/* showCarSummary("show");
+					console.log("setFrom : "+json.result); */
+
+				}
+			});
+		
+			
+			
+	
+		}
+	}
+
+	function srchKidiCar() {
+		var _car_num = $("input[name='car_num']").val();
+		if(_car_num != ""){
+			$.ajax({
+				method: 'POST',
+				url: 'searchCarData.car',
+				data: {
+					type: "srchKidiCarInfo"
+					, car_num: _car_num
+				},
+				dataType: 'json',
+				success: function(json) {
+					if ( json.result == "9" ){
+
+						$("#doDirectSearch").text("조회가 불가능한 차량입니다. 차량번호가 정확한지 확인해 주세요.");
+						showDirectInputForm();
+				        
+					} else if ( json.result == "8" ){
+
+						$("#doDirectSearch").text("해당 IP에서 조회 건 수 초과 ("+json.ip+")");
+						showDirectInputForm();
+				        
+					} else {
+				    	showCarSummary("show");
+				    	
+				    	$("#doDirectSearch").text("");
+				    	
+				    	
+					 	
+						
+						$.each(json.list, function(index, entryList) {
+							
+							if(entryList.prod_year.substring(4,5) == "A"){
+								entryList.prod_year_name = entryList.prod_year_name + " 이후 등록차량";
+							}else if(entryList.prod_year.substring(4,5) == "B"){
+								entryList.prod_year_name = entryList.prod_year_name + " 이전 등록차량";
+							}else{
+								entryList.prod_year_name = entryList.prod_year_name;
+							}
+							var setData = entryList.car_quota + "인승 " + entryList.car_opt + "||" + entryList.car_maker + "||" + entryList.car_name + "||" + entryList.ins_car_name_code + "||" + entryList.ins_car_name_code_type + "||" + entryList.car_maker_year + "||" + entryList.car_name_dtl + "||" + entryList.prod_year_name + "||" + entryList.car_quota + "||" + entryList.prod_year;
+							
+							//console.log("srchKidiCar : " + setData);
+							
+							setFrom(setData);
+							
+						});	
+
+					}
+				},
+				error: function(request, status, error) {
+				
+				}
+			});
+
+			
+
+				setTimeout(function(){
+			 		location.href = "/damoa/mobile/step2.car";
+				}, 2000);		
+		 		
+		 	
+		 	
+		}else{
+			alert("차량번호를 입력해 주세요. ");
+	          
+	       // showCarSummary("");
+		}
+		
+	
+	}
+	function cleanForm() {
+		$("#car_maker").empty().data("option");
+		$("#car_name").empty().data("option");
+		$("#prod_year").empty().data("option");
+		$("#car_name_dtl").empty().data("option");
+		$("#car_opt").empty().data("option");
+		$("#ins_car_name").val("");
+		$("#ins_car_name_code").val("");
+		$("#ins_car_name_code_type").val("");
+		$("#ins_car_made_ym").val("");
+		$("<option></option>").attr("value", "").text(":: 차종 선택 ::").appendTo("#car_name");
+		$("<option></option>").attr("value", "").text(":: 자동차 등록연도(년/월) ::").appendTo("#prod_year");
+		$("<option></option>").attr("value", "").text(":: 세부 차량명  선택 ::").appendTo("#car_name_dtl");
+		$("<option></option>").attr("value", "").text(":: 세부 차량옵션 선택 ::").appendTo("#car_opt");
+	}
+	
+	</script>
+	
+		<section class="small-gap bg-lightgray sec1">
+			
+			<div class="container width-medium">
+         	
+            <!-- 조회폼 시작 -->
+                <div class="search-insurance-container">
+                  <div class="search-insurance">
+                      <form method="post" name="freeSearchForm" id="freeSearchForm">
+                      <div class="search_detail">
+                        <div class="search search2">
+                          <div class="column">
+                            <div class="selectric-wrapper selectric-select_insurance selectric-size-big">
+                              
+                              <div class="selectric"><span class="label">차량번호</span><!--b class="button">▾</b--></div>
+                            </div>
+                          </div>
+                          <div class="column">
+                            <input type="text" name="car_num" id="car_num" class="form-control size-big" maxlength="10" value="" placeholder="띄어쓰기 없이 차량번호를 입력하세요(12가1234)">
+                          </div>
+                          <div class="column">
+                            <button id="searchBtn3" type="button" class="btn btn-green">차량정보조회</button>
+                          </div>
+                        </div>
+                        <div class="clear"></div>
+                      </div>
+                      <input type="hidden" name="__encrypted" value="12SLPV+8nnvA6ysALPcPObu1P0uvrJ5j"></form>
+                      
+                      <div id="doDirectSearch" ></div>
+                      	
+
+                      <form method="post" name="stepForm" id="stepForm" action="step1_proc.car">
+                      <input type="hidden" name="isCarSearch" id="isCarSearch" value="true">
+                      <input type="hidden" name="ins_car_name" id="ins_car_name" value="쏘나타">
+                      <input type="hidden" name="ins_car_name_code" id="ins_car_name_code" value="61Y95">
+                      <input type="hidden" name="ins_car_name_code_type" id="ins_car_name_code_type" value="1">
+                      <input type="hidden" name="ins_car_made_ym" id="ins_car_made_ym" value="2005">
+                      <div id="direct_input_guide">
+                      	<div class="insu_car_number">차량번호로 조회가 안되시나요?</div><a href="javascript:showDirectInputForm();" class="insu_select_btn">차량직접선택</a>
+                      </div>
+                      <div id="car_info">
+                      	<div class="unit">
+                            <select name="car_maker" id="car_maker" class="form-control select_box" onchange="selectForm('car_name');">
+                               <option value="">:: 제조사 선택 ::</option>
+                            </select>
+                        </div>
+                        <div class="unit">
+                            <select name="car_name" id="car_name" class="form-control select_box" onchange="selectForm('prod_year');">
+                                <option value="">:: 차종 선택 ::</option>
+                            </select>
+                        </div>
+                        <div class="unit">
+                            <select name="prod_year" id="prod_year" class="form-control select_box" onchange="selectForm('car_name_dtl');">
+                                <option value="">:: 자동차 등록연도(년/월) ::</option>
+                            </select>
+                        </div>
+                        <div class="unit">
+                            <select name="car_name_dtl" id="car_name_dtl" class="form-control select_box" onchange="selectForm('car_opt');">
+                                <option value="">:: 세부 차량명 선택 ::</option>
+                            </select>
+                        </div>
+                        <div class="unit">
+                            <select name="car_opt" id="car_opt" class="form-control select_box" onchange="setFrom(this.value);">
+                                <option value="">:: 세부 차량옵션 선택 ::</option>
+                            </select>
+                        </div>
+                        
+                        <div class="btn_area">
+                            <button type="button" id="searchBtn2" class="btn_small btn-green">차량정보 확인</button>
+                        </div>
+                      </div>
+                      <!-- <div id="car_noinfo">   
+                      	<div>&nbsp;&nbsp;<img src="/img_damoa/icon/insur_dot.png" alt="아이콘" /> 차량정보 없음<br><br></div>
+                      </div> -->
+                      <div id="car_summary">      
+	                      <div>&nbsp;&nbsp;&nbsp;<img src="/img_damoa/icon/insur_dot.png" alt="아이콘" /> 조회대상 차량정보</div>
+	                      <div class="result-area collapse in" aria-expanded="true" style="">
+                            
+                                <div class="row">
+                                    <div class="col-md-6">
+                                    	<table class="report-table-insurance">
+                                        <caption class="hidden">제조사, 차종 및 세부차종 정보</caption>
+                                            <tbody>
+                                                 <tr>
+                                                    <th>제조사</th>
+                                                    <td id="cMaker">현대</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>차종</th>
+                                                    <td id="cName">쏘나타</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>세부차종</th>
+                                                    <td id="cNameDtl">NF쏘나타 2.0(신형)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="report-table-insurance">
+                                        	<caption class="hidden">세부옵션 및 등록년도</caption>
+                                            <tbody>
+                                                <tr>
+                                                    <th>세부옵션</th>
+                                                    <td id="cOpt">N20 디럭스 고급형,오토,ABS,AIR-D,IM(가솔린)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>등록년도</th>
+                                                    <td id="cProdYear"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                      	  </div>
+                      </div>
+                      <input type="hidden" name="__encrypted" value="zzwxp1ThurZLYpbMSgPZiJz1qE8mx929Imb5wU3w63SxmgMFX0dx/TIZhwivv4ZQfFkbMZmimM2uJH2pufp0TBOLtPHECcyaq/R1qrqgPIMwi4jXULeq5xEgIvlattN4RU62IZfUcggDfdfSZw24M8nMtrNVKlEAi1t7xOjqrX9QjSQtp+K6kBruGJJFEvgRrWwwJ/fMjDYYv1xKNofLR3qjhGErSLwwSQNfN2d5s28fPIkNhbHJi5tE8HucYEC211/iy7uX4HObi02+0Tk9rsTSy/4EE2XkAFj3EtqWV/01AtiOOQniErilCntvWQVNJtJB8IP3p/cP/cZ1K3326NoG8rilqeQyieUGsjXwVXV0PDDI/XstGrDL6g0pSKIBbXxNBk5UVV7D9Okiqf2FjOkrOOJpSkqAi9zELeHzTGy4xePVo4bc3ceqzpfSKTewSLOU1TBQK84pA+wkKZrLVWmMB5asLbprB4nPLTUg1FCmSbunZE9yCcWXUDU17vUcmec9QsBm7Kg="></form>
+                  </div>
+                </div>
+            <!-- 조회폼 끝 -->
+            
+			</div>
+		</section>
+
+		
+<!-- DAMOA  -->
+
+		
+<!-- DAMOA https://ismp2.knia.or.kr/carins/resCompare.knia?special3Yn=0&special1Opt=00000&special2Opt3=000&reqFlow=M&insAge=0&insCarName=%EC%8F%98%EB%82%98%ED%83%80&lawViolCode=C012&past1AcdtCnt=&special9Yn=0&agreeYn=Y&special3Opt=00000000&driverScope=3&tng1Amt=20000&special4Yn=0&special5Yn=0&carUseType=1&past1AcdtPoint=&psn2Amt=00000&carPlateNo=000000000000&carPlateAgentCode=1&special6Yn=0&minBrith=19901125&agreeDate=20191004&agreeType=5&orgcd=&special8Yn=0&driverInjAmt=1500&otherCarYn=1&myPayRatio=20&special7Yn=0&acdt2yrCnt=&psn2Yn=1&ownManyCarCode=0&emgServiceYn=1&noInsYn=1&resultType=json&insTypeCode=&special6Opt=000&special5Opt=000&discExtraGrade=11Z&insHis=0&insExpireDate=&acdt1yrCnt=&insResellerType=&contInfoSeq=0002&insCarMadeYm=2005&driverDthAmt=3000&tngBaseAmt=200&kniaSsn=9011251M00001&insCarrerCode=0&carInfoSeq=0267&mycarYn=1&authType=5&acdt3yrCnt=&rgstGubun=1&multiChargeYn=&carPlateGubun=0&insCarNameCodeType=1&insCarNameCode=61Y95&special7Opt1=00000&yyyyMMdd=20191004&special7Opt2=00000&driverInjGubun=1&insContNo=&special2Yn=0&special1Yn=0&insTerm=2019100420201004&past3AcdtCnt=&specExtraCode= -->
+
+
+<!-- DAMOA https://ismp2.knia.or.kr/carins/resCompare.knia?reqFlow=M&ansCd=000&carPlateNo=000000000000&carPlateGubun=0&resultType=json&carPlateAgentCode=1&carInfoSeq=0267&contInfoSeq=0003&kniaSsn=9011251M00001 -->
+
+
+		
+    
+<div id="printContent">
+		
+	<section class="section small-gap sec-report-title">
+		<div class="container">
+
+			<div class="print-button">
+				<button type="button" class="tr-btn" onClick="javascript:fncPrint();" id="printBtn"><img src="/img/pictogram/print.png" alt="" /> 프린트하기</button>
+			</div>
+			<div class="text-center">
+				<h2 class="title">자동차 보험료 조회결과 보고서</h2>
+
+				<div class="result-info">
+					<div class="report-title-wrap">
+						<div class="img show-print"><img src="/img/icon/paper.png" alt="" /></div>
+						<div>
+							<p class="h4">쏘나타
+							
+							</p>
+							
+							<p class="h5">정보조회일자 : 2019-10-04</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="allBtn" id="topDiv">
+					<button type="button" id="allShowBtn" class="btn btn-default hidden">전체보기</button>
+					<!-- <button type="button" id="allHideBtn" class="btn btn-default">항목보기</button> -->
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section small-gap bg-lightgray sec-report-collapse">
+		<div class="container">		
+			<div id="doctor-deco-img" class="doctor-deco"><img src="/img/character/report-doctor.png" alt="" /></div>
+			
+			<div class="collapse-area">
+				<div class="header-area" >
+					<a role="button" data-toggle="collapse" href="#report1" aria-expanded="true" aria-controls="report1">
+						<strong>1.</strong> 자동차 보험료 조회 결과
+						<i class="icon-font icon-angle-up"></i>
+					</a>
+				</div>
+
+				<div class="result-area collapse in" aria-expanded="true" id="report1">
+					<div class="result-summary">
+					<table class="insu_table_type01" summary="보험상품을 가격별로 정렬한 목록입니다.">
+						<caption class="hidden">보험상품</caption>
+						<!--colgroup>
+							<col width="15%">
+							<col width="*">
+							<col width="20%">
+							<col width="20%">
+						</colgroup-->
+						<tbody>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N04.png" alt="MG" />
+								</td>
+								<td class="citem">MG손해보험</td>
+								<td class="call"><img src="/img/insurance/N04.png" alt="MG" /><br/>MG손해보험</td>
+								<td class="total_cost">
+									<span class="lowest">
+									1,183,740
+									</span>
+								</td>
+								<td>
+									<a href="http://direct.mggeneralins.com/?agCd=A0010001&pdCd=41401&utm_source=damoa&utm_medium=cpc&utm_campaign=carins" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N03.png" alt="롯데" />
+								</td>
+								<td class="citem">롯데손해보험</td>
+								<td class="call"><img src="/img/insurance/N03.png" alt="롯데" /><br/>롯데손해보험</td>
+								<td class="total_cost">
+									
+									1,282,070
+									
+								</td>
+								<td>
+									<a href="http://www.lottehowmuch.com/index2.jsp?IF=AFCOC000047002&PB=002" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N10.png" alt="KB" />
+								</td>
+								<td class="citem">KB손해보험</td>
+								<td class="call"><img src="/img/insurance/N10.png" alt="KB" /><br/>KB손해보험</td>
+								<td class="total_cost">
+									
+									1,355,060
+									
+								</td>
+								<td>
+									<a href="http://direct.kbinsure.co.kr/websquare/promotion.jsp?pid=1090036&code=0009&page=step1 " target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N01.png" alt="메리츠" />
+								</td>
+								<td class="citem">메리츠화재해상보험</td>
+								<td class="call"><img src="/img/insurance/N01.png" alt="메리츠" /><br/>메리츠화재해상보험</td>
+								<td class="total_cost">
+									
+									1,361,980
+									
+								</td>
+								<td>
+									<a href="https://www.meritzdirect.com/DAP1601NT000013/southeaster.do" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N09.png" alt="현대" />
+								</td>
+								<td class="citem">현대해상화재보험</td>
+								<td class="call"><img src="/img/insurance/N09.png" alt="현대" /><br/>현대해상화재보험</td>
+								<td class="total_cost">
+									
+									1,401,140
+									
+								</td>
+								<td>
+									<a href="https://direct.hi.co.kr/service.do?src=image&kw=0171AA&m=28680681ee&inpath=e_sure_market" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N02.png" alt="한화" />
+								</td>
+								<td class="citem">한화손해보험</td>
+								<td class="call"><img src="/img/insurance/N02.png" alt="한화" /><br/>한화손해보험</td>
+								<td class="total_cost">
+									
+									1,433,900
+									
+								</td>
+								<td>
+									<a href="http://www.hanwhadirect.com/landing.do?cmpgId=1000000020 " target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N42.png" alt="더케이" />
+								</td>
+								<td class="citem">더케이손해보험</td>
+								<td class="call"><img src="/img/insurance/N42.png" alt="더케이" /><br/>더케이손해보험</td>
+								<td class="total_cost">
+									
+									1,440,340
+									
+								</td>
+								<td>
+									<a href="https://www.educar.co.kr/st/ins.html" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N41.png" alt="AXA" />
+								</td>
+								<td class="citem">AXA손해보험</td>
+								<td class="call"><img src="/img/insurance/N41.png" alt="AXA" /><br/>AXA손해보험</td>
+								<td class="total_cost">
+									
+									1,484,290
+									
+								</td>
+								<td>
+									<a href="https://www.axa.co.kr/index_email_relay.jsp?sm_flag=N&site_acq_src=0204501&cmpid=da_insmarket_dis_sb_insmarket-damoa&relay_lang_type=ko&utm_source=insmarket&utm_medium=display&utm_campaign=insmarket-damoa&go_url=/ActionControler.action?screenID=SHAI0000&actionID=I01" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N08.png" alt="삼성" />
+								</td>
+								<td class="citem">삼성화재해상보험</td>
+								<td class="call"><img src="/img/insurance/N08.png" alt="삼성" /><br/>삼성화재해상보험</td>
+								<td class="total_cost">
+									
+									1,512,360
+									
+								</td>
+								<td>
+									<a href="http://direct.samsungfire.com/CR_MyAnycarWeb/overture_index.jsp?OTK=A1511OB0050" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="clogo">
+									<img src="/img/insurance/N13.png" alt="동부" />
+								</td>
+								<td class="citem">동부화재</td>
+								<td class="call"><img src="/img/insurance/N13.png" alt="동부" /><br/>동부화재</td>
+								<td class="total_cost">
+									
+									1,514,550
+									
+								</td>
+								<td>
+									<a href="https://www.directdongbu.com/product/at/pvuatarc/step1/formStepPre.do?partner_code=C049" target="_blank" class="insu_join_btn">인터넷 바로가입</a>	
+								</td>
+							</tr>
+						
+						</tbody>
+						</table>
+					</div>
+					
+
+					
+					<div class="message">
+						<i class="icon-font icon-siren"></i><span class="xs-br"></span>
+						조회된 보험료는 회사별 보험료 수준을 비교하기 위한 것으로, 표준화된 가입조건을 통해 산출한 보험료이며 소비자가 
+						보험회사를 통해 산출한 개인별 실제보험료와는 차이가 발생할 수 있습니다.
+						
+					</div>
+					
+				</div>
+			</div>
+
+			<div class="collapse-area">
+				<div class="header-area" >
+					<a role="button" data-toggle="collapse" href="#report2" aria-expanded="false" aria-controls="report2">
+						<strong>2.</strong> 담보 및 특약내용
+						<i class="icon-font icon-angle-up"></i>
+					</a>					
+				</div>
+				<div class="result-area collapse in" aria-expanded="true" id="report2">
+					
+                
+					<div class="cond_cont_rt">
+						<div class="b1">
+							<div class="ttl_y">대인 I</div><div class="vlu">피보험자 1인(의무)</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">대인 II</div><div class="vlu">가입</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">대물배상</div>
+							<div class="vlu">
+							
+								
+								
+								
+								
+								2억원
+								
+								
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">자기신체손해</div>
+							<div class="vlu">
+							
+								
+								
+								3천만원/1천5백만원
+								
+								
+								
+								
+								
+								
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_n">무보험차 상해</div><div class="vlu">가입(2억원)</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">자기차량 손해</div><div class="vlu">가입</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_n">긴급출동 서비스</div><div class="vlu">가입</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">물적사고 할증금액</div>
+							<div class="vlu">
+							
+								
+								
+								
+								200만원
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y">운전자 범위</div>
+							<div class="vlu">
+							
+								피보험자1인
+								
+								
+								
+								
+								
+							
+							</div>
+						</div>
+						
+						
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">마일리지 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">블랙박스 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">자녀할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">사고통보장치 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">대중교통 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">안전운전습관 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">과거주행거리연동 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">E-MAIL 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						<div class="b1">
+							<div class="ttl_y" style="color: #F89D0E;">서민우대 할인</div>
+							<div class="vlu">
+							
+								
+								미가입
+							
+							</div>
+						</div>
+						
+						
+						
+						
+						
+						
+												
+					</div>	
+
+</div>
+							
+					<!-- <div class="button-area line-top">
+						<button type="button" id="back_return"  class="btn btn-blue btn-has-min" onClick="location.href='step2.car';">이전</button>
+					</div>		 -->
+								
+					<div class="insurance-search_continue">
+						<a href="step2.car"><img src="/img/insurance/search_continue.png" class="banner" alt="다른 차량으로 비교견적 재산출" /></a>
+					</div>			
+								
+					<div class="content-container">
+						<div class="guide-box-container">
+							<div class="deco"><img src="/img/character/report-doctor-revers.png" alt="" /></div>
+							<div class="guide-box">
+								<span class="guide-title">용어설명</span>
+								<ul class="guide-list">
+									<li>
+										<strong class="li-title">대인배상 I</strong>
+										<div class="li-content">
+											누구나 의무적으로 가입해야 하는 보험으로, 자동차사고로 다른 사람을 다치게 하거나 사망하게 한 경우 보상합니다
+										</div>	
+									</li>
+									<li>
+										<strong class="li-title">대인배상 II</strong>
+										<div class="li-content">
+											자동차사고로 다른 사람을 다치게 하거나 사망하게 한 경우 대인배상 I의 보상한도를 초과하는 손해를 보상합니다.
+										</div>	
+									</li>
+									<li>
+										<strong class="li-title">대물배상II</strong>
+										<div class="li-content">
+											자동차사고로 다른 사람의 자동차 또는 재물에 끼친 손해를 보상하며, 대물배상은 2천만원까지 반드시 가입해야 하는 의무보험입니다.
+										</div>	
+									</li>
+									<li>
+										<strong class="li-title">자기신체손해</strong>
+										<div class="li-content">
+											보험에 가입한 자동차의 사고로 피보험자 본인 또는 그 가족(부모,배우자 및 자녀)등이 다치거나 사망한 경우에 보상합니다.
+										</div>
+									</li>							
+									<li>
+										<strong class="li-title">무보험자동차 상해</strong>
+										<div class="li-content">
+											피보험자가 무보험자동차에 의하여 생긴 사고로 사망하거나 부상한 경우 보상합니다.(차량탑승 여부와 무관) 사망/부상/후유장애에 대하여 
+											배상의무자(가해자)의 과실에 해당하는 금액을 대인 배상지급 규정에 따라 보상합니다.
+										</div>
+									</li>	
+									<li>
+										<strong class="li-title">자기차량손해</strong>
+										<div class="li-content">
+											자동차사고로 인해 피보험자동차의 생긴 직접적인 손해를 보상하며, 이 경우 사고 발생 당시의 개발원이 정한 최근의 차량가액으로 보상합니다.
+											다만, 일부 도난으로 인한 손해와 추가로 가입하지 않은 부속품은 사고시 보상하지 않습니다.
+										</div>
+									</li>						
+									<li>
+										<strong class="li-title">물적사고 할증금액</strong>
+										<div class="li-content">
+											갱신계약 체결시, 물적사고로 인한 보험금 수준에 따라 할인할증적용등급 변동여부를 결정하는 기준금액을 말합니다.
+										</div>
+									</li>					
+								</ul>								
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+		<div class="callCenterTxt">자동차 보험료 조회와 관련한 문의 : 대표전화 1833-5775</div>	
+		
+	</section>
+
+	<section class="section report-bottom">
+		<div class="container width-small">
+			<h2 class="h2 line-title-header">자동차 보험료 비교견적 서비스는?</h2>
+
+			<div class="content-container text-center sec-row2">
+				보험개발원(www.kidi.or.kr)은 보험입법 제176조에 의하여 설립된 <br />
+				보험요율산출기관이며, 자동차보험료조회서비스는 각 보험사가 손보협회(보험다모아)에 <br>등록한 보험료율을 기초로 제공합니다.
+			</div>
+
+			<div class="content-container text-center sec-row3">
+				<p class="date">2019. 05. 31</p>
+				<p class="h2">보험개발원</p>
+			</div>
+
+		</div>	
+	</section>
+
+	<!-- 2017-09-13 전손 사고 버튼 추가 -->
+	<div class="modal fade modal-generic modal-image" id="image-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"></h4>
+				</div>
+				<div class="modal-body with-header">
+					<div class="modal-outer-container">
+						<div class="modal-inner-container custom-scroll-container">
+							<div><img id="in-image" src="" class="/img-responsive" alt="" /></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 2017-09-13 전손 사고 버튼 추가 -->
+
+</div>
+
+
+	<!--- ### 페이지 끝 --->
+
+	<!--- ### 푸터 시작 --->
+	
+	    
+
+
+
+
+
+<script type="text/javascript">
+	/**
+	 * 다국어 메인 페이지로 이동한다.
+	 */
+	function goMain(lang){	
+			$("#lang").val(lang);
+			
+			$("#objForm").attr("action",'/main.car');
+			$("#objForm").attr("target","_self");
+			$("#objForm").submit();
+	}
+//-->
+</script>
+
+<footer id="footer">
+	<div class="container">
+		<div class="footer-menu-container">
+			<div class="row">
+				<div class="col-md-9">
+					<div class="footer-menu">
+						<ul>
+							<li class="dropdown">
+								<a role="button" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								카히스토리
+								<span class="icon-font icon-sort-down"></span>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="/serviceInfo/release/list.car">보도자료</a></li>
+									<li><a href="/serviceInfo/notice/list.car">공지사항</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a role="button" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								사고이력조회
+								<span class="icon-font icon-sort-down"></span>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="/serviceInfo/carhistory.page">카히스토리란?</a></li>
+
+																		
+									<li><a href="/guide/dictionary.page">용어설명</a></li>
+									<li><a href="/information/information.page">중고차 구입요령</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a role="button" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								고객센터
+								<span class="icon-font icon-sort-down"></span>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li><a href="/customer/faq/list.car">자주 묻는 질문</a></li>
+									<li><a href="/customer/qna/list.car">고객문의</a></li>
+									<li><a href="/customer/alliance.page">제휴문의</a></li>
+									<li><a href="/customer/epilogue/list.car">사용후기</a></li>
+								</ul>
+							</li>
+							<li><a href="/sitemap/sitemap.page">사이트맵</a></li>
+							<li><a href="/serviceInfo/clause.page">이용약관</a></li>
+							<li><a href="/serviceInfo/information.page">정보책임의 한계</a></li>
+							<li><a href="/serviceInfo/personal.page">개인정보취급방침</a></li>
+						</ul>
+					</div>
+				</div>
+				<form name="objForm" id="objForm" method="post">
+				<input type="hidden" name="lang" id="lang" value="" />
+				<div class="col-md-3">
+					<div class="select-language">
+						<i class="icon-font icon-language"></i>
+						<span class="dropdown">
+							<a role="button" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							한국어(KR)
+								<span class="icon-font icon-sort-down"></span>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<!--  <li><a href="https://www.carhistory.or.kr">영어(EN)</a></li> -->
+								<li><a href="#" lang="en" onclick="javascript:goMain(lang);">영어(EN)</a></li>
+								<li><a href="#" lang="vn" onclick="javascript:goMain(lang);">베트남(VN)</a></li>
+								<li><a href="#" lang="es" onclick="javascript:goMain(lang);">에스파냐(ES)</a></li>
+								<li><a href="#" lang="sa" onclick="javascript:goMain(lang);">아랍(SA)</a></li>								
+								<li><a href="#" lang="ru" onclick="javascript:goMain(lang);">러시아(RU)</a></li>								
+								<li><a href="#" lang="mn" onclick="javascript:goMain(lang);">몽골어(MN)</a></li>								
+							</ul>
+						</span>
+					</div>
+				</div>
+				<input type="hidden" name="__encrypted" value="NHmeq4apztdAgBQd3sYV3E2+Zov4kAo2"></form>
+			</div>
+		</div>
+
+		<div class="footer">
+			<div class="row">
+				<div class="col-md-2 hidden-xs hidden-sm">
+					<div class="foot-logo"><img src="/img/logos/foot-logo.png" alt="" /></div>
+				</div>
+				<div class="col-md-6">
+					<!-- 2017-09-18 수정 -->
+					<div class="copyrights">
+						사업자등록번호 116-82-03536 통신판매업 제19-930호<span class="xs-br"></span> 보험개발원 대표: 강호<br />
+						(150-606) 서울특별시 영등포구 국제금융로6길 38 <br />
+						민원처리시간(월~금) 09:30~17:30까지입니다.<span class="xs-br"></span> 시간외 문의는 고객문의를 이용바랍니다. <br />
+						T: 02)368-4300 / F : 02)368-4095<br />
+						COPYRIGHT &copy; BY CARHISTORY. ALL RIGHTS RESERVED.
+					</div>
+					<!-- //2017-09-18 수정 -->
+				</div>
+				<div class="col-md-4">
+					<div class="banners">
+						<ul>
+							<li><img src="/img/logos/banner1.png" alt="" /></li>
+							<li><img src="/img/logos/banner2.png" alt="" /></li>
+						</ul>					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+		
+
+
+<div id="sticky-report" class="sticky-report bg-key">
+	<div class="container">
+		
+		<div class="title-area">
+			<h3 class="title">사고이력조회</h3>
+			<p class="subtitle">
+				중고차의 현재부터 과거까지 <br />
+				보험사고 이력정보 확인이 가능합니다
+			</p>
+			<button type="button">
+				<div class="close">
+					<i class="icon-font icon-angle-up"></i>
+					<span>숨기기</span>
+				</div>
+				<div class="open">
+					<i class="icon-font icon-angle-down"></i>
+					<span>펼치기</span>
+				</div>
+			</button>
+		</div>
+
+		<div class="content-area">
+			<div class="search-area">
+				<div>
+					<form method="post" name="stickySearchForm"  id ="stickySearchForm"  action="/search/carhistory/initSearch.car">
+						<div class="column">
+							<select class="select size-big" onchange="heroSelect(this);"  id="carnumSel" name="carnumSel"> 
+								<option value="0" selected="selected">차량번호</option>							
+								<option value="1">차대번호</option>							
+							</select>
+						</div>																		
+						<div class="column">
+							<input type="text" name="carnum" id="carnum" class="form-control size-big" maxlength="10" placeholder="띄어쓰기 없이 차량번호를 입력하세요(12가1234)" />
+							<input type="text" name="carbodynum" id="carbodynum" class="form-control size-big hidden" maxlength="17" placeholder="띄어쓰기 없이 차대번호를 입력하세요(17자리)" />
+						</div>						
+						<div class="column">
+							<button class="btn btn-black"  id="stickySearchBtn">조회하기</button>
+						</div>
+						<input type="hidden" name="malsoGb" id="malsoGb0" value="1"/>
+					<input type="hidden" name="__encrypted" value="Wo005Kk3G7fsmH1hSz2gRPEQDqHiDVYglNN8QbvB5fvPR5huCfqh3ql+nLvORsBSblJskiJeoLThdiPl6gftIXaGdGN9CDqDLHW61xT+E4uvrIE7+CYHzI489imNyyvdMdrtMtf77y4OfkTiGqy5iwGWwLNhI03cHLD/JGYiyL6VbfoJ9Gwmkg=="></form>
+				</div>
+			</div>
+
+			<div class="button-area">
+				<a href="/guide/sample.page" >				
+					<i class="icon-font icon-report-white"></i>샘플 보고서 보기
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+	
+	<!--- ### 푸터 끝 --->
+
+</body>
+</html>

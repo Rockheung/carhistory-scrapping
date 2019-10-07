@@ -1,0 +1,17 @@
+
+
+@URL = http://localhost:8080
+@KEY = 5lRBr6ccMt43l3q2MagajKpCaggqGZPlOVwDMDEYyjFweWqaywcGh1BMWCERuMCA
+@CAR_NUM = 48도9842
+
+###
+
+OPTIONS {{URL}}/auth HTTP/1.1
+Origin: *
+Access-Control-Request-Method: PUT
+
+###
+
+OPTIONS {{URL}}/auth HTTP/1.1
+Origin: *
+Access-Control-Request-Method: POST
