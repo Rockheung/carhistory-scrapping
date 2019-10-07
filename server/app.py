@@ -3,7 +3,7 @@ import aiohttp_cors
 
 from routes import routes
 
-routes.static('/static','../')
+routes.static('/spec','../client/build')
 
 app = web.Application()
 cors = aiohttp_cors.setup(app, defaults={
